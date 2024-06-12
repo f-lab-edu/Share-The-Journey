@@ -22,17 +22,17 @@ const Header = () => {
 
 const HomeTitle = () => {
   return (
-    <section className="w-3/4">
-      <div className="flex justify-center mb-6">
+    <section>
+      <div className="mb-6">
         <h1 className="font-bold text-xl">
           나만의 여행지를 공유하고, 가고싶은 여행지를 찾아보세요.
         </h1>
       </div>
       <div className="flex justify-between mb-6">
-        <Link className="ml-10 font-semibold" href="/">
+        <Link className="font-semibold" href="/">
           추천 여행지 등록하기
         </Link>
-        <Link className="mr-10 font-semibold" href="/">
+        <Link className="font-semibold" href="/">
           내가 추천한 여행지
         </Link>
       </div>
