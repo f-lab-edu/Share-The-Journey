@@ -1,0 +1,26 @@
+[
+  {
+    "imgUrl": "/1.jpg",
+    "name": "개똥이네 캠핑장",
+    "location": "강원도 평창",
+    "price": 0,
+    "score": 4.5,
+    "id": 1
+  },
+  {
+    "imgUrl": "/2.jpg",
+    "name": "개똥이네 캠핑장",
+    "location": "강원도 평창",
+    "price": 300,
+    "score": 3.9,
+    "id": 2
+  },
+  {
+    "imgUrl": "/3.jpg",
+    "name": "개똥이네 캠핑장",
+    "location": "강원도 평창",
+    "price": 1000,
+    "score": 4.8,
+    "id": 3
+  }
+]
