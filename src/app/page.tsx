@@ -15,7 +15,7 @@ export default function Home() {
         <HomeTitle />
       </section>
       <SearchBar />
-      <section className="mt-10">
+      <section className="mt-10 w-8/12 mx-auto">
         {data.map((item) => (
           <BigCard
             imgUrl={item.imgUrl}
@@ -62,7 +62,7 @@ const HomeTitle = () => {
 
 const SearchBar = () => {
   return (
-    <section className="flex justify-center">
+    <section className="flex justify-center w-8/12 mx-auto">
       <input
         type="search"
         placeholder="여행지를 검색해보세요."
