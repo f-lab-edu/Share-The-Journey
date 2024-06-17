@@ -11,7 +11,7 @@ type CardProps = {
 };
 
 const BigCard = ({ imgUrl, name, score, location, price, id }: CardProps) => {
-  const priceText = price > 0 ? `${price}$` : '무료';
+  const priceText = price > 0 ? `${price.toLocaleString()}$` : '무료';
 
   return (
     <section className="w-10/12 mb-8 mx-auto hover:border rounded-xl overflow-hidden">

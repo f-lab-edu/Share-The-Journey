@@ -67,7 +67,9 @@ const PlaceInfo = ({
       <h1 className="text-xl font-extrabold mb-3">이름: {name}</h1>
       <h3 className="font-semibold mb-3">등록자: {registrant}</h3>
       <p className="mb-3">주소: {location}</p>
-      <p className="mb-3">가격 정보: {price > 0 ? `${price}$` : 'free'}</p>
+      <p className="mb-3">
+        가격 정보: {price > 0 ? `${price.toLocaleString()}$` : 'free'}
+      </p>
       <p className="mb-3">주변시설: 주차장 있음, 화장실 있음</p>
       <p className=" text-lg font-bold">한줄평: {description}</p>
     </section>
