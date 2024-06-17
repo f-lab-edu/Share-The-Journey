@@ -7,14 +7,15 @@ type CardProps = {
   score: number;
   location: string;
   price: number;
+  id: number;
 };
 
-const BigCard = ({ imgUrl, name, score, location, price }: CardProps) => {
+const BigCard = ({ imgUrl, name, score, location, price, id }: CardProps) => {
   const priceText = price > 0 ? `${price}$` : '무료';
 
   return (
     <section className="w-10/12 mb-8 mx-auto hover:border rounded-xl overflow-hidden">
-      <Link href="#">
+      <Link href={`/detail/${id}`}>
         <Image
           src={imgUrl}
           alt={name}

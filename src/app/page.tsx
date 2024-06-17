@@ -22,6 +22,7 @@ export default function Home() {
             price={place.price}
             score={place.score}
             key={place.id}
+            id={place.id}
           />
         ))}
       </section>
