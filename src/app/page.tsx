@@ -1,13 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import fs from 'fs';
-import path from 'path';
+import placeData from './places.json';
 
 export default function Home() {
-  const filePath = path.join(process.cwd(), 'places.json');
-  const jsonData = fs.readFileSync(filePath, 'utf-8');
-  const data = JSON.parse(jsonData);
-
   return (
     <div>
       <Header />
@@ -16,14 +11,14 @@ export default function Home() {
       </section>
       <SearchBar />
       <section className="mt-10 w-8/12 mx-auto">
-        {data.map((item) => (
+        {placeData.map((place) => (
           <BigCard
-            imgUrl={item.imgUrl}
-            name={item.name}
-            location={item.location}
-            price={item.price}
-            score={item.score}
-            key={item.id}
+            imgUrl={place.imgUrl}
+            name={place.name}
+            location={place.location}
+            price={place.price}
+            score={place.score}
+            key={place.id}
           />
         ))}
       </section>
