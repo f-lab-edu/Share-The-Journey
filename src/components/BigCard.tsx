@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { PlaceInfoProps } from '@/types/place';
+import { PlaceCardProps } from '@/types/place';
 
 const BigCard = ({
   imgUrl,
@@ -10,7 +10,7 @@ const BigCard = ({
   location,
   price,
   id,
-}: PlaceInfoProps) => {
+}: PlaceCardProps) => {
   const priceText = price > 0 ? `${price.toLocaleString()}$` : '무료';
   const imgUrlStr = imgUrl ? imgUrl : '/default.png';
 

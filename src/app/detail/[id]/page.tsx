@@ -6,7 +6,7 @@ import reviewInfo from '../../reviews.json';
 
 import Header from '@/components/Header';
 
-import { PlaceInfoProps } from '@/types/place';
+import { PlaceDetailProps } from '@/types/place';
 
 type Review = {
   description: string;
@@ -22,7 +22,7 @@ type ReviewProps = {
 
 const Page = ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const place: PlaceInfoProps | undefined = placeInfo.find(
+  const place: PlaceDetailProps | undefined = placeInfo.find(
     (place) => place.id === Number(id)
   );
 
@@ -66,7 +66,7 @@ const PlaceInfo = ({
   score,
   registrant,
   facilities,
-}: PlaceInfoProps) => {
+}: PlaceDetailProps) => {
   return (
     <section className="bg-gray-300 rounded-md p-3 w-9/12 mx-auto mb-10">
       <div className="flex justify-between">
