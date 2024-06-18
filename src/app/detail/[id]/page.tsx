@@ -5,15 +5,7 @@ import reviewInfo from '../../reviews.json';
 
 import Header from '@/components/Header';
 
-type PlaceProps = {
-  imgUrl: string;
-  name: string;
-  location: string;
-  price: number;
-  score: number;
-  registrant: string;
-  description: string;
-};
+import { PlaceInfoProps } from '@/types/place';
 
 type Review = {
   description: string;
@@ -29,7 +21,7 @@ type ReviewProps = {
 
 const Page = ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const place: PlaceProps | undefined = placeInfo.find(
+  const place: PlaceInfoProps | undefined = placeInfo.find(
     (place) => place.id === Number(id)
   );
   const reviewList: Review[] = reviewInfo.filter(
@@ -61,7 +53,7 @@ const PlaceInfo = ({
   description,
   score,
   registrant,
-}: PlaceProps) => {
+}: PlaceInfoProps) => {
   return (
     <section className="bg-gray-300 rounded-md p-3 w-9/12 mx-auto mb-10">
       <h1 className="text-xl font-extrabold mb-3">이름: {name}</h1>

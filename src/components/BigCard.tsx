@@ -1,16 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-type CardProps = {
-  imgUrl: string;
-  name: string;
-  score: number;
-  location: string;
-  price: number;
-  id: number;
-};
+import { PlaceInfoProps } from '@/types/place';
 
-const BigCard = ({ imgUrl, name, score, location, price, id }: CardProps) => {
+const BigCard = ({
+  imgUrl,
+  name,
+  score,
+  location,
+  price,
+  id,
+}: PlaceInfoProps) => {
   const priceText = price > 0 ? `${price.toLocaleString()}$` : '무료';
 
   return (
