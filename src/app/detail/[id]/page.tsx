@@ -27,12 +27,13 @@ const Page = ({ params }: { params: { id: string } }) => {
   const reviewList: Review[] = reviewInfo.filter(
     (review) => review.place_id === Number(id)
   )[0].reviews;
+  const imgUrlStr = place?.imgUrl ? place?.imgUrl : '/default.png';
 
   return (
     <>
       <Header />
       <Image
-        src={place!.imgUrl}
+        src={imgUrlStr}
         alt={place!.name}
         width={1200}
         height={600}

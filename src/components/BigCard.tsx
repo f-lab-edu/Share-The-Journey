@@ -12,12 +12,13 @@ const BigCard = ({
   id,
 }: PlaceInfoProps) => {
   const priceText = price > 0 ? `${price.toLocaleString()}$` : '무료';
+  const imgUrlStr = imgUrl ? imgUrl : '/default.png';
 
   return (
     <section className="w-10/12 mb-8 mx-auto hover:border rounded-xl overflow-hidden">
       <Link href={`/detail/${id}`}>
         <Image
-          src={imgUrl}
+          src={imgUrlStr}
           alt={name}
           width={900}
           height={400}
