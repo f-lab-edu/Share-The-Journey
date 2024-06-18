@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { PlaceCardProps } from '@/types/place';
 
-const BigCard = ({
+const HomePlaceCard = ({
   imgUrl,
   name,
   score,
@@ -35,4 +35,4 @@ const BigCard = ({
   );
 };
 
-export default BigCard;
+export default HomePlaceCard;
