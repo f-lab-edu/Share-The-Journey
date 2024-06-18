@@ -64,6 +64,7 @@ const PlaceInfo = ({
   description,
   score,
   registrant,
+  facilities,
 }: PlaceInfoProps) => {
   return (
     <section className="bg-gray-300 rounded-md p-3 w-9/12 mx-auto mb-10">
@@ -73,7 +74,7 @@ const PlaceInfo = ({
       <p className="mb-3">
         가격 정보: {price > 0 ? `${price.toLocaleString()}$` : 'free'}
       </p>
-      <p className="mb-3">주변시설: 주차장 있음, 화장실 있음</p>
+      <p className="mb-3">주변시설: {facilities.join(', ')}</p>
       <p className=" text-lg font-bold">한줄평: {description}</p>
     </section>
   );

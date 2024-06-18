@@ -7,4 +7,5 @@ export type PlaceInfoProps = {
   registrant: string;
   description: string;
   id: number;
+  facilities: string[];
 };
