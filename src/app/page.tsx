@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import placeData from './places.json';
 
-import Header from '../components/Header';
-import SearchBar from '../components/SearchBar';
+import Header from '@/components/Header';
+import SearchBar from '@/components/SearchBar';
 import HomePlaceCard from '@/components/HomePlaceCard';
 
 export default function Home() {
