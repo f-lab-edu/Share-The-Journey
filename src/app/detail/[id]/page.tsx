@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { format, parse } from 'date-fns';
+import currency from 'currency.js';
 
 import placeInfo from '../../places.json';
 import reviewInfo from '../../reviews.json';
@@ -67,6 +68,11 @@ const PlaceInfo = ({
   registrant,
   facilities,
 }: PlaceDetailProps) => {
+  const priceText =
+    price > 0
+      ? `${currency(price, { separator: ',', precision: 1 }).format()}`
+      : '무료';
+
   return (
     <section className="bg-gray-300 rounded-md p-3 w-9/12 mx-auto mb-10">
       <div className="flex justify-between">
@@ -78,7 +84,7 @@ const PlaceInfo = ({
       <h3 className="font-semibold mb-3">등록자: {registrant}</h3>
       <p className="mb-3">주소: {location}</p>
       <p className="mb-3">
-        가격 정보: {price > 0 ? `${price.toLocaleString()}$` : 'free'}
+        가격 정보: <span className="font-semibold">{priceText}</span>
       </p>
       <p className="mb-3">주변시설: {facilities.join(', ')}</p>
       <p className=" text-lg font-bold">한줄평: {description}</p>

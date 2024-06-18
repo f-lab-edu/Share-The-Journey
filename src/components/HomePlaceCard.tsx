@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import currency from 'currency.js';
 
 import { PlaceCardProps } from '@/types/place';
 
@@ -11,7 +12,10 @@ const HomePlaceCard = ({
   price,
   id,
 }: PlaceCardProps) => {
-  const priceText = price > 0 ? `${price.toLocaleString()}$` : '무료';
+  const priceText =
+    price > 0
+      ? `${currency(price, { separator: ',', precision: 1 }).format()}`
+      : '무료';
   const imgUrlStr = imgUrl ? imgUrl : '/default.png';
 
   return (
