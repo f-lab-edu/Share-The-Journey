@@ -24,22 +24,32 @@ const Page = ({ params }: { params: { id: string } }) => {
   const place: PlaceInfoProps | undefined = placeInfo.find(
     (place) => place.id === Number(id)
   );
+
+  if (!place) {
+    return (
+      <>
+        <Header />
+        <div>해당 장소가 존재하지 않습니다.</div>
+      </>
+    );
+  }
+
   const reviewList: Review[] = reviewInfo.filter(
     (review) => review.place_id === Number(id)
   )[0].reviews;
-  const imgUrlStr = place?.imgUrl ? place?.imgUrl : '/default.png';
+  const imgUrlStr = place.imgUrl ? place.imgUrl : '/default.png';
 
   return (
     <>
       <Header />
       <Image
         src={imgUrlStr}
-        alt={place!.name}
+        alt={place.name}
         width={1200}
         height={600}
         className="!h-[400px] !w-[700px] mx-auto my-20 rounded-lg"
       />
-      <PlaceInfo {...place!} />
+      <PlaceInfo {...place} />
       <ReviewArea reviews={reviewList} />
     </>
   );
