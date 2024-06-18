@@ -68,7 +68,12 @@ const PlaceInfo = ({
 }: PlaceInfoProps) => {
   return (
     <section className="bg-gray-300 rounded-md p-3 w-9/12 mx-auto mb-10">
-      <h1 className="text-xl font-extrabold mb-3">이름: {name}</h1>
+      <div className="flex justify-between">
+        <h1 className="text-xl font-extrabold mb-3">이름: {name}</h1>
+        <p className="font-semibold mb-1">
+          별점: <span className="text-amber-500 pr-1">{score}</span>
+        </p>
+      </div>
       <h3 className="font-semibold mb-3">등록자: {registrant}</h3>
       <p className="mb-3">주소: {location}</p>
       <p className="mb-3">
