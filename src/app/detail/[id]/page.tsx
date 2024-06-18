@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { format, parse } from 'date-fns';
 
 import placeInfo from '../../places.json';
 import reviewInfo from '../../reviews.json';
@@ -91,6 +92,9 @@ const ReviewArea = ({ reviews }: ReviewProps) => {
       <h2 className="text-xl font-extrabold mb-5">리뷰</h2>
       {reviews.length > 0 ? (
         reviews.map((review) => {
+          const parsedDate = parse(review.date, 'yyyy-MM-dd', new Date());
+          const formattedDate = format(parsedDate, 'yyyy.MM.dd');
+
           return (
             <div
               key={review.review_id}
@@ -104,7 +108,7 @@ const ReviewArea = ({ reviews }: ReviewProps) => {
               </div>
               <p className="mb-1">{review.description}</p>
               <p className="font-semibold text-zinc-300">
-                작성일: {review.date.replace(/-/g, '.')}
+                작성일: {formattedDate}
               </p>
             </div>
           );
