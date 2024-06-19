@@ -1,22 +1,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import currency from 'currency.js';
 
-type CardProps = {
-  imgUrl: string;
-  name: string;
-  score: number;
-  location: string;
-  price: number;
-};
+import { PlaceCardProps } from '@/types/place';
 
-const BigCard = ({ imgUrl, name, score, location, price }: CardProps) => {
-  const priceText = price > 0 ? `${price}$` : '무료';
+const HomePlaceCard = ({
+  imgUrl,
+  name,
+  score,
+  location,
+  price,
+  id,
+}: PlaceCardProps) => {
+  const priceText =
+    price > 0
+      ? `${currency(price, { separator: ',', precision: 1 }).format()}`
+      : '무료';
+  const imgUrlStr = imgUrl ? imgUrl : '/default.png';
 
   return (
     <section className="w-10/12 mb-8 mx-auto hover:border rounded-xl overflow-hidden">
-      <Link href="#">
+      <Link href={`/detail/${id}`}>
         <Image
-          src={imgUrl}
+          src={imgUrlStr}
           alt={name}
           width={900}
           height={400}
@@ -33,4 +39,4 @@ const BigCard = ({ imgUrl, name, score, location, price }: CardProps) => {
   );
 };
 
-export default BigCard;
+export default HomePlaceCard;

@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import placeData from './places.json';
 
-import Header from '../components/Header';
-import SearchBar from '../components/SearchBar';
-import BigCard from '../components/BigCard';
+import Header from '@/components/Header';
+import SearchBar from '@/components/SearchBar';
+import HomePlaceCard from '@/components/HomePlaceCard';
 
 export default function Home() {
   return (
@@ -15,13 +15,14 @@ export default function Home() {
       <SearchBar />
       <section className="mt-10 w-8/12 mx-auto">
         {placeData.map((place) => (
-          <BigCard
+          <HomePlaceCard
             imgUrl={place.imgUrl}
             name={place.name}
             location={place.location}
             price={place.price}
             score={place.score}
             key={place.id}
+            id={place.id}
           />
         ))}
       </section>
