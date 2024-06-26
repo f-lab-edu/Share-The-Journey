@@ -10,25 +10,25 @@ const Page = () => {
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
         <form className="mt-1">
           <label className="block">
-            이메일
+            <h3 className="font-semibold">이메일</h3>
             <input
-              className="my-2 rounded-md w-full p-1"
+              className="my-2 rounded-md w-full p-1 px-2"
               type="email"
               name="email"
             />
           </label>
           <label className="block">
-            비밀번호
+            <h3 className="font-semibold">비밀번호</h3>
             <input
-              className="rounded-md w-full my-2 p-1"
+              className="rounded-md w-full my-2 p-1 px-2"
               type="password"
               name="password"
             />
           </label>
           <label className="block">
-            닉네임
+            <h3 className="font-semibold">닉네임</h3>
             <input
-              className="rounded-md w-full my-2 p-1"
+              className="rounded-md w-full my-2 p-1 px-2"
               type="text"
               name="nickname"
             />
