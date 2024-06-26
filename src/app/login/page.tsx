@@ -9,7 +9,7 @@ const Page = () => {
       <h1 className="w-2/4 mx-auto text-center font-bold text-2xl mb-5 mt-32">
         Login
       </h1>
-      <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-3">
+      <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
         <form className="mt-1">
           <label className="block">
             이메일
