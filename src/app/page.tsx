@@ -39,7 +39,7 @@ const HomeTitle = () => {
         </h1>
       </div>
       <div className="flex justify-between mb-6">
-        <Link className="font-semibold" href="/">
+        <Link className="font-semibold" href="/upload">
           추천 여행지 등록하기
         </Link>
         <Link className="font-semibold" href="/">
