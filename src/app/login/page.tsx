@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import Header from '@/components/Header';
 
 const Page = () => {
@@ -26,12 +28,14 @@ const Page = () => {
             />
           </label>
           <p className="text-sm text-center my-2">아직 회원이 아니신가요?</p>
-          <button
-            className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
-            type="button"
-          >
-            Sign Up
-          </button>
+          <Link href="/signUp">
+            <button
+              className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
+              type="button"
+            >
+              Sign Up
+            </button>
+          </Link>
           <button
             className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold mb-2"
             type="submit"
