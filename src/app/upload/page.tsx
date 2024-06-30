@@ -4,10 +4,10 @@ const Page = () => {
   return (
     <>
       <Header />
-      <h1 className="mt-32 text-center font-bold text-2xl mb-5">
+      <h1 className="mt-20 text-center font-bold text-2xl mb-5">
         추천 여행지 등록하기
       </h1>
-      <div className="w-3/5 mx-auto bg-slate-100 p-4 rounded-lg">
+      <div className="w-3/5 mx-auto bg-slate-100 p-4 rounded-lg mb-10">
         <form>
           <label className="block">
             <h3 className="font-semibold">이름</h3>
