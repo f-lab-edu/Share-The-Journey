@@ -40,7 +40,16 @@ const Page = () => {
           </label>
           <label className="block">
             <h3 className="font-semibold">사진</h3>
-            <input className="w-full p-1 my-2" type="file" accept="image/*" />
+            <input
+              className="w-full p-1 my-2 text-slate-400
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-600 file:text-white
+              hover:file:bg-blue-200 hover:file:text-slate-400"
+              type="file"
+              accept="image/*"
+            />
           </label>
 
           <button className="w-full bg-green-600 text-white font-semibold p-2 rounded-lg my-3">
