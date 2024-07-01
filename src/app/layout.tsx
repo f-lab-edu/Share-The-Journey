@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'Share The Journey',
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="container mx-auto bg-white px-4">{children}</body>
+      <body className="container mx-auto bg-white px-4">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
