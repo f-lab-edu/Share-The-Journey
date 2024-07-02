@@ -1,6 +1,8 @@
+import { PlaceDetailProps } from '@/types/place';
+
 export const dynamic = 'force-dynamic';
 
-const places = [
+const places: PlaceDetailProps[] = [
   {
     imgUrl: '/1.jpg',
     name: '개똥이네 캠핑장',
