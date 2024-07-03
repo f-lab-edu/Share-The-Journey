@@ -1,8 +1,29 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import auth from '@/app/auth';
 
 import Header from '@/components/Header';
 
 const Page = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((res) => {
+        router.push('/');
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   return (
     <>
       <Header />
@@ -10,13 +31,15 @@ const Page = () => {
         Login
       </h1>
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
-        <form className="mt-1">
+        <form className="mt-1" onSubmit={handleSubmit}>
           <label className="block">
             <h3 className="font-semibold">이메일</h3>
             <input
               className="my-2 rounded-md w-full p-1 px-2"
               type="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </label>
           <label className="block">
@@ -25,6 +48,8 @@ const Page = () => {
               className="rounded-md w-full my-2 p-1 px-2"
               type="password"
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </label>
           <p className="text-sm text-center my-2">아직 회원이 아니신가요?</p>
