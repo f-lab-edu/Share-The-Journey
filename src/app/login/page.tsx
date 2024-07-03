@@ -13,7 +13,7 @@ const Page = () => {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
