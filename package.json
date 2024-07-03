@@ -11,6 +11,7 @@
   "dependencies": {
     "currency.js": "^2.0.4",
     "date-fns": "^3.6.0",
+    "firebase": "^10.12.2",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
