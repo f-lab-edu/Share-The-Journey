@@ -27,7 +27,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between mt-5">
+    <header className="flex justify-between mt-5 items-center">
       <Link href="/">Home</Link>
       <h1 className="font-bold text-lg">Share The Journey</h1>
       {user && <button onClick={handleLogout}>Logout</button>}
