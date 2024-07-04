@@ -1,11 +1,24 @@
+'use client';
+
 import Link from 'next/link';
-import placeData from './places.json';
+import { useState, useEffect } from 'react';
 
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import HomePlaceCard from '@/components/HomePlaceCard';
+import { PlaceDetailProps } from '@/types/place';
 
 export default function Home() {
+  const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
+
+  useEffect(() => {
+    fetch('/api/places')
+      .then((res) => res.json())
+      .then((data) => {
+        setPlaces(data.data);
+      });
+  }, []);
+
   return (
     <div>
       <Header />
@@ -14,7 +27,7 @@ export default function Home() {
       </section>
       <SearchBar />
       <section className="mt-10 w-8/12 mx-auto">
-        {placeData.map((place) => (
+        {places.map((place) => (
           <HomePlaceCard
             imgUrl={place.imgUrl}
             name={place.name}
