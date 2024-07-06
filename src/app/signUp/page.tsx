@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import auth from '@/app/auth';
 
 import Header from '@/components/Header';
@@ -10,12 +10,17 @@ import Header from '@/components/Header';
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
+        const user = res.user;
+        return updateProfile(user, { displayName: nickname });
+      })
+      .then(() => {
         router.push('/');
       })
       .catch((err) => {
@@ -52,14 +57,15 @@ const Page = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          {/* <label className="block">
+          <label className="block">
             <h3 className="font-semibold">닉네임</h3>
             <input
               className="rounded-md w-full my-2 p-1 px-2"
               type="text"
-              name="nickname"
+              name={nickname}
+              onChange={(e) => setNickname(e.target.value)}
             />
-          </label> */}
+          </label>
           <button
             className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold my-2"
             type="submit"
