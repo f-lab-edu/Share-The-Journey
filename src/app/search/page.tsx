@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import Image from 'next/image';
@@ -45,7 +45,7 @@ const Page = () => {
   }, [query]);
 
   return (
-    <>
+    <Suspense>
       <Header />
       <h1 className="text-center text-2xl font-bold my-10">
         {query} 검색 결과 보기
@@ -78,7 +78,7 @@ const Page = () => {
           </>
         )}
       </section>
-    </>
+    </Suspense>
   );
 };
 
