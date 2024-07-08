@@ -2,19 +2,15 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { User, onAuthStateChanged, signOut } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { signOut } from 'firebase/auth';
+import { useContext } from 'react';
+
 import auth from '@/app/auth';
+import { AuthContext } from '@/app/AuthContext';
 
 const Header = () => {
-  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-  }, []);
+  const { user } = useContext(AuthContext);
 
   const handleLogout = () => {
     signOut(auth)
