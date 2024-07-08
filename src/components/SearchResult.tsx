@@ -57,14 +57,7 @@ const SearchResult = () => {
         searchResult.length > 0 &&
         searchResult.map((place) => (
           <div key={place.id}>
-            <SearchResultCard
-              imgUrl={place.imgUrl}
-              name={place.name}
-              location={place.location}
-              price={place.price}
-              score={place.score}
-              id={place.id}
-            />
+            <SearchResultCard {...place} />
             <hr className="w-10/12 mx-auto" />
           </div>
         ))}
