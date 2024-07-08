@@ -43,7 +43,7 @@ const SearchResult = () => {
     <section className="w-8/12 mx-auto mt-20">
       {searchResult &&
         searchResult.map((place) => (
-          <>
+          <div key={place.id}>
             <SearchResultCard
               imgUrl={place.imgUrl}
               name={place.name}
@@ -51,10 +51,9 @@ const SearchResult = () => {
               price={place.price}
               score={place.score}
               id={place.id}
-              key={place.id}
             />
             <hr className="w-10/12 mx-auto" />
-          </>
+          </div>
         ))}
       {searchResult.length === 0 && (
         <>
