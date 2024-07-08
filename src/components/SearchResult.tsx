@@ -9,6 +9,7 @@ import SearchResultCard from './SearchResultCard';
 
 const SearchResult = () => {
   const [searchResult, setSearchResult] = useState<PlaceCardProps[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
 
@@ -26,12 +27,15 @@ const SearchResult = () => {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch search results');
+          const errorData = await response.json();
+          setError(errorData.message);
+          return;
         }
 
         const data = await response.json();
         setSearchResult(data.data);
       } catch (error) {
+        setError('검색 중 오류가 발생했습니다. 다시 시도해주세요.');
         console.error('Search error:', error);
       }
     };
@@ -41,7 +45,16 @@ const SearchResult = () => {
 
   return (
     <section className="w-8/12 mx-auto mt-20">
-      {searchResult &&
+      {error && (
+        <>
+          <p className="text-2xl text-center text-red-400 font-semibold">
+            {error}
+          </p>
+          <p className="text-center text-red-400 mt-2">다시 시도해 주세요.</p>
+        </>
+      )}
+      {!error &&
+        searchResult.length > 0 &&
         searchResult.map((place) => (
           <div key={place.id}>
             <SearchResultCard
@@ -55,7 +68,7 @@ const SearchResult = () => {
             <hr className="w-10/12 mx-auto" />
           </div>
         ))}
-      {searchResult.length === 0 && (
+      {!error && searchResult.length === 0 && (
         <>
           <p className="text-2xl text-center text-slate-400 font-semibold">
             검색 결과를 찾을 수 없습니다.
