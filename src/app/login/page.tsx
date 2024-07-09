@@ -2,25 +2,22 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import Header from '@/components/Header';
 
 import auth from '@/app/auth';
-import { AuthContext } from '@/app/AuthContext';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
-  const { setUser } = useContext(AuthContext);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        setUser(res.user);
         router.push('/');
       })
       .catch((err) => {
