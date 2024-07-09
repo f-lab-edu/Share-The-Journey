@@ -1,7 +1,9 @@
-import { useMemo, useState, useEffect, ReactNode } from 'react';
-import { getAuth, User } from 'firebase/auth';
+import { useState, useEffect, ReactNode } from 'react';
+import { User } from 'firebase/auth';
 
 import { AuthContext } from './AuthContext';
+
+import auth from './auth';
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -9,7 +11,6 @@ type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -17,9 +18,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
 
     return () => unsubscribe();
-  }, [auth]);
+  }, []);
 
-  const value = useMemo(() => ({ user }), [user]);
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+  );
 };
