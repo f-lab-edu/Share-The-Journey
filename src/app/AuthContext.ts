@@ -3,5 +3,4 @@ import { User } from 'firebase/auth';
 
 export const AuthContext = createContext({
   user: null as User | null,
-  setUser: (user: User | null) => {},
 });
