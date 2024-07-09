@@ -1,8 +1,81 @@
+'use client';
+
 import { Input, Checkbox, CheckboxGroup } from '@nextui-org/react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 
 import Header from '@/components/Header';
 
+type NewPlaceForm = {
+  name: string;
+  location: string;
+  price: number;
+  score: number;
+  review: string;
+  amenities: string[];
+  image: File | null;
+};
+
+const initialNewPlace: NewPlaceForm = {
+  name: '',
+  location: '',
+  price: 0,
+  score: 0,
+  review: '',
+  amenities: [],
+  image: null,
+};
+
 const Page = () => {
+  const [newPlace, setNewPlace] = useState<NewPlaceForm>(initialNewPlace);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewPlace((prev) => ({
+      ...prev,
+      [name]: name === 'price' || name === 'score' ? parseFloat(value) : value,
+    }));
+  };
+
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    setNewPlace((prev) => {
+      const amenities = checked
+        ? [...prev.amenities, value]
+        : prev.amenities.filter((a) => a !== value);
+      return {
+        ...prev,
+        amenities,
+      };
+    });
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setNewPlace((prev) => ({
+        ...prev,
+        image: e.target.files![0],
+      }));
+    }
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !newPlace.name ||
+      !newPlace.location ||
+      newPlace.price <= 0 ||
+      newPlace.score < 0 ||
+      newPlace.score > 5 ||
+      !newPlace.review
+    ) {
+      alert('모든 필수 입력 항목을 입력해 주세요.');
+      return;
+    }
+
+    console.log(newPlace);
+  };
+
   return (
     <>
       <Header />
@@ -10,33 +83,40 @@ const Page = () => {
         추천 여행지 등록하기
       </h1>
       <div className="w-3/5 mx-auto bg-slate-100 p-4 rounded-lg mb-10">
-        <form className="flex flex-wrap">
+        <form className="flex flex-wrap" onSubmit={handleSubmit}>
           <div className="mb-3 font-semibold w-full">
             <Input
               type="text"
               isRequired
+              name="name"
               label="이름"
               labelPlacement="outside"
               placeholder="이름을 입력해 주세요."
               variant="bordered"
               className="bg-white rounded-xl"
+              value={newPlace.name}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-3 font-semibold w-full">
             <Input
               type="text"
               isRequired
+              name="location"
               label="위치"
               labelPlacement="outside"
               placeholder="위치를 입력해 주세요. ex) 서울특별시 강남구 역삼동 123-45"
               variant="bordered"
               className="bg-white rounded-xl"
+              value={newPlace.location}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-3 font-semibold w-full">
             <Input
               color="default"
               isRequired
+              name="price"
               type="number"
               placeholder="0.00"
               label="가격"
@@ -44,6 +124,8 @@ const Page = () => {
               variant="bordered"
               className="bg-white rounded-xl"
               min={0}
+              value={newPlace.price.toString()}
+              onChange={handleChange}
               endContent={
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small">$</span>
@@ -57,11 +139,15 @@ const Page = () => {
               labelPlacement="outside"
               placeholder="0~5 사이의 숫자를 입력해 주세요. ex) 4.5"
               isRequired
+              name="score"
               variant="bordered"
               className="bg-white rounded-xl"
               type="number"
+              step={0.1}
               min={0}
               max={5}
+              value={newPlace.score.toString()}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-3 font-semibold w-full">
@@ -71,8 +157,11 @@ const Page = () => {
               labelPlacement="outside"
               placeholder="여행지의 간단한 소감을 입력해주세요!"
               isRequired
+              name="review"
               variant="bordered"
               className="bg-white rounded-xl"
+              value={newPlace.review}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-3 text-black w-full">
@@ -87,10 +176,20 @@ const Page = () => {
               color="primary"
               radius="md"
             >
-              <Checkbox size="md" value="bathroom">
+              <Checkbox
+                size="md"
+                value="bathroom"
+                checked={newPlace.amenities.includes('화장실')}
+                onChange={handleCheckboxChange}
+              >
                 화장실
               </Checkbox>
-              <Checkbox size="md" value="parking">
+              <Checkbox
+                size="md"
+                value="parking"
+                checked={newPlace.amenities.includes('주차장')}
+                onChange={handleCheckboxChange}
+              >
                 주차장
               </Checkbox>
             </CheckboxGroup>
@@ -106,6 +205,7 @@ const Page = () => {
               hover:file:bg-blue-200 hover:file:text-slate-400"
               type="file"
               accept="image/*"
+              onChange={handleFileChange}
             />
           </label>
           <button className="w-full bg-green-600 text-white font-semibold p-2 rounded-lg my-3">
