@@ -2,21 +2,39 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
 
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import HomePlaceCard from '@/components/HomePlaceCard';
+import db from './db';
 import { PlaceDetailProps } from '@/types/place';
 
 export default function Home() {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
 
   useEffect(() => {
-    fetch('/api/places')
-      .then((res) => res.json())
-      .then((data) => {
-        setPlaces(data.data);
-      });
+    // fetch('/api/places')
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     setPlaces(data.data);
+    //   });
+    const fetchPlaces = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'places'));
+        const placeData: PlaceDetailProps[] = [];
+
+        querySnapshot.forEach((doc) => {
+          placeData.push({ id: doc.id, ...doc.data() } as PlaceDetailProps);
+        });
+
+        setPlaces(placeData);
+      } catch (e) {
+        console.error('Error getting documents: ', e);
+      }
+    };
+
+    fetchPlaces();
   }, []);
 
   return (
