@@ -1,11 +1,12 @@
 import Image from 'next/image';
-import { format, parse } from 'date-fns';
 import currency from 'currency.js';
+import { format, parse } from 'date-fns';
+import { doc, getDoc } from 'firebase/firestore';
 
-import placeInfo from '../../places.json';
 import reviewInfo from '../../reviews.json';
 
 import Header from '@/components/Header';
+import db from '@/app/db';
 
 import { PlaceDetailProps } from '@/types/place';
 
@@ -21,11 +22,19 @@ type ReviewProps = {
   reviews: Review[];
 };
 
-const Page = ({ params }: { params: { id: string } }) => {
-  const { id } = params;
-  const place: PlaceDetailProps | undefined = placeInfo.find(
-    (place) => place.id === Number(id)
-  );
+const fetchPlace = async (id: string): Promise<PlaceDetailProps | null> => {
+  const docRef = doc(db, 'places', id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data() as PlaceDetailProps;
+  }
+
+  return null;
+};
+
+const Page = async ({ params }: { params: { id: string } }) => {
+  const place = await fetchPlace(params.id);
 
   if (!place) {
     return (
@@ -36,8 +45,9 @@ const Page = ({ params }: { params: { id: string } }) => {
     );
   }
 
+  // 리뷰는 임시로 고정된 데이터 사용
   const reviewList: Review[] = reviewInfo.filter(
-    (review) => review.place_id === Number(id)
+    (review) => review.place_id === 1
   )[0].reviews;
   const imgUrlStr = place.imgUrl ? place.imgUrl : '/default.png';
 
@@ -63,10 +73,10 @@ const PlaceInfo = ({
   name,
   location,
   price,
-  description,
+  review,
   score,
   registrant,
-  facilities,
+  amenities,
 }: PlaceDetailProps) => {
   const priceText =
     price > 0
@@ -86,8 +96,8 @@ const PlaceInfo = ({
       <p className="mb-3">
         가격 정보: <span className="font-semibold">{priceText}</span>
       </p>
-      <p className="mb-3">주변시설: {facilities.join(', ')}</p>
-      <p className=" text-lg font-bold">한줄평: {description}</p>
+      <p className="mb-3">편의시설: {amenities.join(', ')}</p>
+      <p className=" text-lg font-bold">한줄평: {review}</p>
     </section>
   );
 };
@@ -107,7 +117,7 @@ const ReviewArea = ({ reviews }: ReviewProps) => {
               className="mb-5 border p-3 rounded-md bg-white"
             >
               <div className="flex justify-between">
-                <h3 className="text-lg font-bold">작정자: {review.writer}</h3>
+                <h3 className="text-lg font-bold">작성자: {review.writer}</h3>
                 <p className="font-semibold mb-1">
                   별점: <span className="text-amber-400">{review.score}</span>
                 </p>
