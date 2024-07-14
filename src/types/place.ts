@@ -4,7 +4,7 @@ export type PlaceCardProps = {
   location: string;
   price: number;
   score: number;
-  id: number;
+  id: string;
 };
 
 export type PlaceDetailProps = PlaceCardProps & {
