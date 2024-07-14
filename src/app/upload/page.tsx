@@ -21,8 +21,6 @@ type NewPlaceForm = {
   registrant: string;
 };
 
-// const initialNewPlace: NewPlaceForm = ;
-
 const Page = () => {
   const { user } = useContext(AuthContext);
   const [newPlace, setNewPlace] = useState<NewPlaceForm>({
