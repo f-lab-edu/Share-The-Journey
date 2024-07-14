@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import HomePlaceCard from '@/components/HomePlaceCard';
 import db from './db';
+import { AuthContext } from './AuthContext';
 import { PlaceDetailProps } from '@/types/place';
 
 export default function Home() {
@@ -62,6 +63,15 @@ export default function Home() {
 }
 
 const HomeTitle = () => {
+  const { user } = useContext(AuthContext);
+  const uploadLink = user ? '/upload' : '/login';
+  const myJourneyListLink = user ? '/' : '/login';
+
+  const handleClickLink = () => {
+    if (!user) {
+      alert('로그인 후 이용해주세요.');
+    }
+  };
   return (
     <section>
       <div className="mb-6">
@@ -70,10 +80,18 @@ const HomeTitle = () => {
         </h1>
       </div>
       <div className="flex justify-between mb-6">
-        <Link className="font-semibold" href="/upload">
+        <Link
+          className="font-semibold"
+          href={uploadLink}
+          onClick={handleClickLink}
+        >
           추천 여행지 등록하기
         </Link>
-        <Link className="font-semibold" href="/">
+        <Link
+          className="font-semibold"
+          href={myJourneyListLink}
+          onClick={handleClickLink}
+        >
           내가 추천한 여행지
         </Link>
       </div>
