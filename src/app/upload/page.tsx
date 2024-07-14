@@ -4,6 +4,7 @@ import { Input, Checkbox, CheckboxGroup } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import Header from '@/components/Header';
 import db from '../db';
@@ -15,7 +16,7 @@ type NewPlaceForm = {
   score: number;
   review: string;
   amenities: string[];
-  image: File | null;
+  imgUrl: string | null;
 };
 
 const initialNewPlace: NewPlaceForm = {
@@ -25,11 +26,12 @@ const initialNewPlace: NewPlaceForm = {
   score: 0,
   review: '',
   amenities: [],
-  image: null,
+  imgUrl: null,
 };
 
 const Page = () => {
   const [newPlace, setNewPlace] = useState<NewPlaceForm>(initialNewPlace);
+  const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -55,10 +57,7 @@ const Page = () => {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setNewPlace((prev) => ({
-        ...prev,
-        image: e.target.files![0],
-      }));
+      setFile(e.target.files[0]);
     }
   };
 
@@ -78,7 +77,21 @@ const Page = () => {
     }
 
     try {
-      const docRef = await addDoc(collection(db, 'places'), newPlace);
+      let imgUrl = '';
+
+      if (file) {
+        const storage = getStorage();
+        const imageRef = ref(storage, `images/${file.name}`);
+        await uploadBytes(imageRef, file);
+        imgUrl = await getDownloadURL(imageRef);
+      }
+
+      const newPlaceData = {
+        ...newPlace,
+        imgUrl: imgUrl,
+      };
+
+      const docRef = await addDoc(collection(db, 'places'), newPlaceData);
       router.push('/');
     } catch (e) {
       console.error('Error adding document: ', e);
