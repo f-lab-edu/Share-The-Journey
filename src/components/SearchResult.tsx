@@ -6,42 +6,81 @@ import { useSearchParams } from 'next/navigation';
 import { PlaceCardProps } from '@/types/place';
 
 import SearchResultCard from './SearchResultCard';
+import db from '@/app/db';
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  startAt,
+  endAt,
+} from 'firebase/firestore';
 
 const SearchResult = () => {
   const [searchResult, setSearchResult] = useState<PlaceCardProps[]>([]);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const query = searchParams.get('query');
+  const queryStr = searchParams.get('query');
+
+  // useEffect(() => {
+  //   if (!query) return;
+
+  //   const fetchSearchResults = async () => {
+  //     try {
+  //       const response = await fetch('/api/search', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ query }),
+  //       });
+
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         setError(errorData.message);
+  //         return;
+  //       }
+
+  //       const data = await response.json();
+  //       setSearchResult(data.data);
+  //     } catch (error) {
+  //       setError('검색 중 오류가 발생했습니다. 다시 시도해주세요.');
+  //       console.error('Search error:', error);
+  //     }
+  //   };
+
+  //   fetchSearchResults();
+  // }, [query]);
 
   useEffect(() => {
     if (!query) return;
 
     const fetchSearchResults = async () => {
       try {
-        const response = await fetch('/api/search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query }),
+        const placesCollectionRef = collection(db, 'places');
+
+        const q = query(
+          placesCollectionRef,
+          orderBy('name'),
+          startAt(queryStr),
+          endAt(queryStr + '\uf8ff')
+        );
+
+        const querySnapshot = await getDocs(q);
+        const results: PlaceCardProps[] = [];
+        querySnapshot.forEach((doc) => {
+          results.push({ id: doc.id, ...doc.data() } as PlaceCardProps);
         });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          setError(errorData.message);
-          return;
-        }
-
-        const data = await response.json();
-        setSearchResult(data.data);
+        setSearchResult(results);
       } catch (error) {
         setError('검색 중 오류가 발생했습니다. 다시 시도해주세요.');
-        console.error('Search error:', error);
+        console.error('Firestore search error:', error);
       }
     };
 
     fetchSearchResults();
-  }, [query]);
+  });
 
   return (
     <section className="w-8/12 mx-auto mt-20">
