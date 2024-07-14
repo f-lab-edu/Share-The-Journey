@@ -1,9 +1,12 @@
 'use client';
 
 import { Input, Checkbox, CheckboxGroup } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { addDoc, collection } from 'firebase/firestore';
 
 import Header from '@/components/Header';
+import db from '../db';
 
 type NewPlaceForm = {
   name: string;
@@ -27,6 +30,7 @@ const initialNewPlace: NewPlaceForm = {
 
 const Page = () => {
   const [newPlace, setNewPlace] = useState<NewPlaceForm>(initialNewPlace);
+  const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,7 +62,7 @@ const Page = () => {
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (
@@ -73,7 +77,12 @@ const Page = () => {
       return;
     }
 
-    console.log(newPlace);
+    try {
+      const docRef = await addDoc(collection(db, 'places'), newPlace);
+      router.push('/');
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
   };
 
   return (
