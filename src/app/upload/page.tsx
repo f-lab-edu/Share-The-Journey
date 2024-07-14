@@ -2,12 +2,13 @@
 
 import { Input, Checkbox, CheckboxGroup } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useContext } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import Header from '@/components/Header';
 import db from '../db';
+import { AuthContext } from '../AuthContext';
 
 type NewPlaceForm = {
   name: string;
@@ -17,20 +18,23 @@ type NewPlaceForm = {
   review: string;
   amenities: string[];
   imgUrl: string | null;
+  registrant: string;
 };
 
-const initialNewPlace: NewPlaceForm = {
-  name: '',
-  location: '',
-  price: 0,
-  score: 0,
-  review: '',
-  amenities: [],
-  imgUrl: null,
-};
+// const initialNewPlace: NewPlaceForm = ;
 
 const Page = () => {
-  const [newPlace, setNewPlace] = useState<NewPlaceForm>(initialNewPlace);
+  const { user } = useContext(AuthContext);
+  const [newPlace, setNewPlace] = useState<NewPlaceForm>({
+    name: '',
+    location: '',
+    price: 0,
+    score: 0,
+    review: '',
+    amenities: [],
+    imgUrl: null,
+    registrant: user!.displayName!,
+  });
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
 
