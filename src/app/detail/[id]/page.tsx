@@ -83,6 +83,9 @@ const PlaceInfo = ({
       ? `${currency(price, { separator: ',', precision: 1 }).format()}`
       : '무료';
 
+  const amenitiesText =
+    amenities.length > 0 ? amenities.join(', ') : '정보 없음';
+
   return (
     <section className="bg-gray-300 rounded-md p-3 w-9/12 mx-auto mb-10">
       <div className="flex justify-between">
@@ -96,7 +99,7 @@ const PlaceInfo = ({
       <p className="mb-3">
         가격 정보: <span className="font-semibold">{priceText}</span>
       </p>
-      <p className="mb-3">편의시설: {amenities.join(', ')}</p>
+      <p className="mb-3">편의시설: {amenitiesText}</p>
       <p className=" text-lg font-bold">한줄평: {review}</p>
     </section>
   );
