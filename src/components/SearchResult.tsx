@@ -7,20 +7,13 @@ import { PlaceCardProps } from '@/types/place';
 
 import SearchResultCard from './SearchResultCard';
 import db from '@/app/db';
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  startAt,
-  endAt,
-} from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
 const SearchResult = () => {
   const [searchResult, setSearchResult] = useState<PlaceCardProps[]>([]);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const queryStr = searchParams.get('query');
+  const query = searchParams.get('query');
 
   // useEffect(() => {
   //   if (!query) return;
@@ -58,18 +51,13 @@ const SearchResult = () => {
     const fetchSearchResults = async () => {
       try {
         const placesCollectionRef = collection(db, 'places');
-
-        const q = query(
-          placesCollectionRef,
-          orderBy('name'),
-          startAt(queryStr),
-          endAt(queryStr + '\uf8ff')
-        );
-
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(placesCollectionRef);
         const results: PlaceCardProps[] = [];
         querySnapshot.forEach((doc) => {
-          results.push({ id: doc.id, ...doc.data() } as PlaceCardProps);
+          const data = doc.data();
+          if (data.name.toLowerCase().includes(query.toLowerCase())) {
+            results.push({ id: doc.id, ...data } as PlaceCardProps);
+          }
         });
 
         setSearchResult(results);
@@ -80,7 +68,7 @@ const SearchResult = () => {
     };
 
     fetchSearchResults();
-  });
+  }, [query]);
 
   return (
     <section className="w-8/12 mx-auto mt-20">
