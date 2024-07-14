@@ -10,5 +10,5 @@ export type PlaceCardProps = {
 export type PlaceDetailProps = PlaceCardProps & {
   registrant: string;
   description: string;
-  facilities: string[];
+  amenities: string[];
 };
