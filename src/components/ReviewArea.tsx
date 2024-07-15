@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { format, parse } from 'date-fns';
 import {
   collection,
@@ -12,6 +12,7 @@ import {
 
 import db from '@/app/db';
 import { Review } from '@/types/review';
+import { AuthContext } from '@/app/AuthContext';
 
 const addReview = async (placeId: string, review: Omit<Review, 'place_id'>) => {
   const reviewRef = collection(db, 'reviews');
@@ -21,6 +22,7 @@ const addReview = async (placeId: string, review: Omit<Review, 'place_id'>) => {
 const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const reviewsQuery = query(
@@ -43,7 +45,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
 
     const review = {
       description: newReview,
-      writer: '사용자',
+      writer: user?.displayName ?? '비회원',
       date: new Date().toISOString().split('T')[0],
       place_id: placeId,
       id: '',
