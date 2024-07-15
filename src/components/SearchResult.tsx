@@ -52,13 +52,11 @@ const SearchResult = () => {
       try {
         const placesCollectionRef = collection(db, 'places');
         const querySnapshot = await getDocs(placesCollectionRef);
-        const results: PlaceCardProps[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.name.toLowerCase().includes(query.toLowerCase())) {
-            results.push({ id: doc.id, ...data } as PlaceCardProps);
-          }
-        });
+        const results: PlaceCardProps[] = querySnapshot.docs
+          .map((doc) => ({ id: doc.id, ...doc.data() } as PlaceCardProps))
+          .filter((doc) =>
+            doc.name.toLowerCase().includes(query.toLowerCase())
+          );
 
         setSearchResult(results);
       } catch (error) {
