@@ -31,7 +31,7 @@ const Page = () => {
     review: '',
     amenities: [],
     imgUrl: null,
-    registrant: user?.displayName ? user.displayName : '',
+    registrant: user!.displayName!,
   });
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
