@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState, useContext } from 'react';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import {
   collection,
   addDoc,
   query,
   where,
   onSnapshot,
+  orderBy,
 } from 'firebase/firestore';
 
 import db from '@/app/db';
@@ -27,7 +28,8 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   useEffect(() => {
     const reviewsQuery = query(
       collection(db, 'reviews'),
-      where('place_id', '==', placeId)
+      where('place_id', '==', placeId),
+      orderBy('date', 'desc')
     );
     const unsubscribe = onSnapshot(reviewsQuery, (querySnapshot) => {
       const reviewData = querySnapshot.docs.map((doc) => ({
