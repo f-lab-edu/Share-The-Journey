@@ -4,9 +4,10 @@ import { useEffect, useState, useContext } from 'react';
 import { format } from 'date-fns';
 import {
   collection,
-  addDoc,
+  setDoc,
   query,
   where,
+  doc,
   onSnapshot,
   orderBy,
 } from 'firebase/firestore';
@@ -15,9 +16,9 @@ import db from '@/app/db';
 import { Review } from '@/types/review';
 import { AuthContext } from '@/app/AuthContext';
 
-const addReview = async (placeId: string, review: Omit<Review, 'place_id'>) => {
-  const reviewRef = collection(db, 'reviews');
-  await addDoc(reviewRef, { ...review, place_id: placeId });
+const addReview = async (review: Omit<Review, 'id'>) => {
+  const newReviewRef = doc(collection(db, 'reviews'));
+  await setDoc(newReviewRef, { ...review, id: newReviewRef.id });
 };
 
 const ReviewArea = ({ placeId }: { placeId: string }) => {
@@ -50,10 +51,9 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
       writer: user?.displayName ?? '비회원',
       date: Date.now(),
       place_id: placeId,
-      id: '',
     };
 
-    await addReview(placeId, review);
+    await addReview(review);
     setNewReview('');
   };
 
