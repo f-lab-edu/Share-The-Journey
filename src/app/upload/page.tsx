@@ -23,18 +23,14 @@ type NewPlaceForm = {
 
 const Page = () => {
   const { user } = useContext(AuthContext);
-  const [newPlace, setNewPlace] = useState<NewPlaceForm>({
-    name: '',
-    location: '',
-    price: 0,
-    score: 0,
-    review: '',
-    amenities: [],
-    imgUrl: null,
-    registrant: user!.displayName!,
-  });
+  const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({});
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+
+  if (!user) {
+    // fail-fast
+    return <></>
+  }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,12 +43,11 @@ const Page = () => {
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     setNewPlace((prev) => {
-      const amenities = checked
-        ? [...prev.amenities, value]
-        : prev.amenities.filter((a) => a !== value);
+      const prevAmenities = prev.amenities ?? []; 
+      const newAmenities = checked ? [...prevAmenities, value] : prevAmenities.filter((a) => a !== value);
       return {
         ...prev,
-        amenities,
+        amenities: newAmenities,
       };
     });
   };
