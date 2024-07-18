@@ -29,7 +29,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
     const reviewsQuery = query(
       collection(db, 'reviews'),
       where('place_id', '==', placeId),
-      orderBy('date', 'desc')
+      orderBy('date', 'asc')
     );
     const unsubscribe = onSnapshot(reviewsQuery, (querySnapshot) => {
       const reviewData = querySnapshot.docs.map((doc) => ({
