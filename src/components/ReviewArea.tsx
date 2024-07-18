@@ -46,7 +46,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
     const review = {
       description: newReview,
       writer: user?.displayName ?? '비회원',
-      date: new Date().toISOString().split('T')[0],
+      date: Date.now(),
       place_id: placeId,
       id: '',
     };
@@ -60,8 +60,8 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
       <h2 className="text-xl font-extrabold mb-5">리뷰</h2>
       {reviews.length > 0 ? (
         reviews.map((review) => {
-          const parsedDate = parse(review.date, 'yyyy-MM-dd', new Date());
-          const formattedDate = format(parsedDate, 'yyyy.MM.dd');
+          const date = new Date(review.date);
+          const formattedDate = format(date, 'yyyy.MM.dd');
 
           return (
             <div
