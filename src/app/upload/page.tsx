@@ -29,7 +29,7 @@ const Page = () => {
 
   if (!user) {
     // fail-fast
-    return <></>
+    return <></>;
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +43,10 @@ const Page = () => {
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     setNewPlace((prev) => {
-      const prevAmenities = prev.amenities ?? []; 
-      const newAmenities = checked ? [...prevAmenities, value] : prevAmenities.filter((a) => a !== value);
+      const prevAmenities = prev.amenities ?? [];
+      const newAmenities = checked
+        ? [...prevAmenities, value]
+        : prevAmenities.filter((a) => a !== value);
       return {
         ...prev,
         amenities: newAmenities,
@@ -59,15 +61,19 @@ const Page = () => {
   };
 
   const handleSubmit = async (e: FormEvent) => {
+    const { name, location, price, score, review, amenities } = newPlace;
     e.preventDefault();
 
     if (
-      !newPlace.name ||
-      !newPlace.location ||
-      newPlace.price <= 0 ||
-      newPlace.score < 0 ||
-      newPlace.score > 5 ||
-      !newPlace.review
+      !name ||
+      !location ||
+      price === undefined ||
+      price <= 0 ||
+      score === undefined ||
+      score < 0 ||
+      score > 5 ||
+      !review ||
+      !amenities
     ) {
       alert('모든 필수 입력 항목을 입력해 주세요.');
       return;
@@ -88,7 +94,7 @@ const Page = () => {
         imgUrl: imgUrl,
       };
 
-      const docRef = await addDoc(collection(db, 'places'), newPlaceData);
+      await addDoc(collection(db, 'places'), newPlaceData);
       router.push('/');
     } catch (e) {
       console.error('Error adding document: ', e);
@@ -143,7 +149,11 @@ const Page = () => {
               variant="bordered"
               className="bg-white rounded-xl"
               min={0}
-              value={newPlace.price.toString()}
+              value={
+                newPlace.price !== undefined
+                  ? newPlace.price.toString()
+                  : '0.00'
+              }
               onChange={handleChange}
               endContent={
                 <div className="pointer-events-none flex items-center">
@@ -165,7 +175,9 @@ const Page = () => {
               step={0.1}
               min={0}
               max={5}
-              value={newPlace.score.toString()}
+              value={
+                newPlace.score !== undefined ? newPlace.score.toString() : '0.0'
+              }
               onChange={handleChange}
             />
           </div>
@@ -198,7 +210,7 @@ const Page = () => {
               <Checkbox
                 size="md"
                 value="bathroom"
-                checked={newPlace.amenities.includes('화장실')}
+                checked={(newPlace.amenities ?? []).includes('화장실')}
                 onChange={handleCheckboxChange}
               >
                 화장실
@@ -206,7 +218,7 @@ const Page = () => {
               <Checkbox
                 size="md"
                 value="parking"
-                checked={newPlace.amenities.includes('주차장')}
+                checked={(newPlace.amenities ?? []).includes('주차장')}
                 onChange={handleCheckboxChange}
               >
                 주차장
