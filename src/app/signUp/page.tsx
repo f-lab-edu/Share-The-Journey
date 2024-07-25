@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
+import { setDoc, doc } from 'firebase/firestore';
 import auth from '@/app/auth';
 import db from '@/app/db';
 import Header from '@/components/Header';
@@ -19,7 +19,8 @@ const Page = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         const user = res.user;
-        return addDoc(collection(db, 'users'), {
+        const userRef = doc(db, 'users', user.uid);
+        return setDoc(userRef, {
           uid: user.uid,
           email: user.email,
           nickname,
