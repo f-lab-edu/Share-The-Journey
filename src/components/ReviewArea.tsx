@@ -10,6 +10,7 @@ import {
   doc,
   onSnapshot,
   orderBy,
+  getDoc,
 } from 'firebase/firestore';
 
 import db from '@/app/db';
@@ -21,9 +22,25 @@ const addReview = async (review: Omit<Review, 'id'>) => {
   await setDoc(newReviewRef, { ...review, id: newReviewRef.id });
 };
 
+const fetchNicknames = async (uids: string[]) => {
+  const nicknames: { [key: string]: string } = {};
+  for (const uid of uids) {
+    const userRef = doc(db, 'users', uid);
+    const userDoc = await getDoc(userRef);
+
+    if (userDoc.exists()) {
+      nicknames[uid] = userDoc.data().nickname;
+    }
+  }
+  return nicknames;
+};
+
 const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [userNicknames, setUserNicknames] = useState<{ [key: string]: string }>(
+    {}
+  );
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -32,12 +49,18 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
       where('place_id', '==', placeId),
       orderBy('date', 'asc')
     );
-    const unsubscribe = onSnapshot(reviewsQuery, (querySnapshot) => {
+
+    const unsubscribe = onSnapshot(reviewsQuery, async (querySnapshot) => {
       const reviewData = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       })) as Review[];
+
+      const uids = [...new Set(reviewData.map((review) => review.writer))];
+      const nicknames = await fetchNicknames(uids);
+
       setReviews(reviewData);
+      setUserNicknames(nicknames);
     });
 
     return () => unsubscribe();
@@ -48,7 +71,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
 
     const review = {
       description: newReview,
-      writer: user?.displayName ?? '비회원',
+      writer: user?.uid ?? '비회원',
       date: Date.now(),
       place_id: placeId,
     };
@@ -64,6 +87,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
         reviews.map((review) => {
           const date = new Date(review.date);
           const formattedDate = format(date, 'yyyy.MM.dd');
+          const nickname = userNicknames[review.writer] ?? review.writer;
 
           return (
             <div
@@ -71,7 +95,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
               className="mb-5 border p-3 rounded-md bg-white"
             >
               <div className="flex justify-between">
-                <h3 className="text-lg font-bold">작성자: {review.writer}</h3>
+                <h3 className="text-lg font-bold">작성자: {nickname}</h3>
                 {/* <p className="font-semibold mb-1">
                   별점: <span className="text-amber-400">{review.score}</span>
                 </p> */}
