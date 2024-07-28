@@ -12,3 +12,14 @@ export type PlaceDetailProps = PlaceCardProps & {
   review: string;
   amenities: string[];
 };
+
+export type NewPlaceForm = {
+  name: string;
+  location: string;
+  price: number;
+  score: number;
+  review: string;
+  amenities: string[];
+  imgUrl: string | null;
+  registrant: string;
+};
