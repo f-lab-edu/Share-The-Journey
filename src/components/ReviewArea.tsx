@@ -11,7 +11,6 @@ import {
   onSnapshot,
   orderBy,
   getDoc,
-  getDocs,
 } from 'firebase/firestore';
 
 import db from '@/app/db';
@@ -23,75 +22,32 @@ const addReview = async (review: Omit<Review, 'id'>) => {
   await setDoc(newReviewRef, { ...review, id: newReviewRef.id });
 };
 
-const fetchNicknames = async (uids: string[]) => {
-  // const nicknames: { [key: string]: string } = {};
-  // for (const uid of uids) {
-  //   const userRef = doc(db, 'users', uid);
-  //   const userDoc = await getDoc(userRef);
-
-  //   if (userDoc.exists()) {
-  //     nicknames[uid] = userDoc.data().nickname;
-  //   }
-  // }
-  // return nicknames;
-  return Promise.all(uids.map(uid => {
-    return getDoc(doc(db, 'users', uid));
-  }))
-    .then(docs => docs.filter(doc => doc.exists))
-    .then(docs => docs.map(doc => doc.data()!))
-    .then(docs => docs.reduce((prev, cur) => {
-      const {uid, nickname} = cur;
-      const newObj: {[key: string]: string} = {}
-      newObj[uid] = nickname
-      return {
-        ...prev,
-        ...newObj,
-      }
-    }, {}))
-    .catch(); 
-  // const usersRef = collection(db, 'users');
-  // const q = query(usersRef, where('uid', 'in', uids)); // uids.length <= 30
-  // return getDocs(q).then(snap => snap.docs.map(doc => doc.data()))
-  // .then(docs => docs.reduce((prev, cur) => {
-  //   const {uid, nickname} = cur;
-  //   const newObj: {[key: string]: string} = {}
-  //   newObj[uid] = nickname
-  //   return {
-  //     ...prev,
-  //     ...newObj,
-  //   }
-  // }, {}));
-};
-
-function ReviewCard(props:{review: Review}) {
-  const {review}= props
+const ReviewCard = (props: { review: Review }) => {
+  const { review } = props;
   const formattedDate = format(new Date(review.date), 'yyyy.MM.dd');
 
   const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     if (review.writer === '비회원') {
-      setUsername('비회원')
+      setUsername('비회원');
       return;
     }
     const getUserName = async () => {
       const userDoc = await getDoc(doc(db, 'users', review.writer));
       // TODO: 문서를 혹시 못 읽어왔을 때의 예외처리
-      setUsername(userDoc.data()!.nickname)
-    }
+      setUsername(userDoc.data()!.nickname);
+    };
     getUserName().finally(() => {
       // TODO 에러 처리.
     });
-  }, [review.writer])
+  }, [review.writer]);
 
   if (username === null) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
   return (
-    <div
-      key={review.id}
-      className="mb-5 border p-3 rounded-md bg-white"
-    >
+    <div key={review.id} className="mb-5 border p-3 rounded-md bg-white">
       <div className="flex justify-between">
         <h3 className="text-lg font-bold">작성자: {username}</h3>
         {/* <p className="font-semibold mb-1">
@@ -99,12 +55,10 @@ function ReviewCard(props:{review: Review}) {
         </p> */}
       </div>
       <p className="mb-1">{review.description}</p>
-      <p className="font-semibold text-zinc-300">
-        작성일: {formattedDate}
-      </p>
+      <p className="font-semibold text-zinc-300">작성일: {formattedDate}</p>
     </div>
-  )
-}
+  );
+};
 
 const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
@@ -147,7 +101,9 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
     <section className="w-9/12 mx-auto  bg-gray-300 p-3 rounded-md mb-10">
       <h2 className="text-xl font-extrabold mb-5">리뷰</h2>
       {reviews.length > 0 ? (
-        reviews.map((review, index) => (<ReviewCard key={index} review={review} />))
+        reviews.map((review, index) => (
+          <ReviewCard key={index} review={review} />
+        ))
       ) : (
         <p className="mb-5 border p-2 rounded-md bg-white">리뷰가 없습니다.</p>
       )}
