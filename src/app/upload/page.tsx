@@ -8,18 +8,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import Header from '@/components/Header';
 import db from '../db';
+import { validateNewPlaceForm } from '@/utils/validate';
 import { AuthContext } from '../AuthContext';
-
-type NewPlaceForm = {
-  name: string;
-  location: string;
-  price: number;
-  score: number;
-  review: string;
-  amenities: string[];
-  imgUrl: string | null;
-  registrant: string;
-};
+import { NewPlaceForm } from '@/types/place';
 
 const Page = () => {
   const { user } = useContext(AuthContext);
@@ -61,21 +52,11 @@ const Page = () => {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    const { name, location, price, score, review, amenities } = newPlace;
     e.preventDefault();
+    const newPlaceValidateInfo = validateNewPlaceForm(newPlace as NewPlaceForm);
 
-    if (
-      !name ||
-      !location ||
-      price === undefined ||
-      price <= 0 ||
-      score === undefined ||
-      score < 0 ||
-      score > 5 ||
-      !review ||
-      !amenities
-    ) {
-      alert('모든 필수 입력 항목을 입력해 주세요.');
+    if (!newPlaceValidateInfo.success) {
+      alert(newPlaceValidateInfo.message);
       return;
     }
 
@@ -143,17 +124,12 @@ const Page = () => {
               isRequired
               name="price"
               type="number"
-              placeholder="0.00"
+              placeholder="무료는 0으로 입력해 주세요."
               label="가격"
               labelPlacement="outside"
               variant="bordered"
               className="bg-white rounded-xl"
               min={0}
-              value={
-                newPlace.price !== undefined
-                  ? newPlace.price.toString()
-                  : '0.00'
-              }
               onChange={handleChange}
               endContent={
                 <div className="pointer-events-none flex items-center">
@@ -175,9 +151,6 @@ const Page = () => {
               step={0.1}
               min={0}
               max={5}
-              value={
-                newPlace.score !== undefined ? newPlace.score.toString() : '0.0'
-              }
               onChange={handleChange}
             />
           </div>
