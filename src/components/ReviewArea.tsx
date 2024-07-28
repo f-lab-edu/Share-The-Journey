@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import {
   collection,
@@ -25,6 +26,7 @@ const addReview = async (review: Omit<Review, 'id'>) => {
 const ReviewCard = (props: { review: Review }) => {
   const { review } = props;
   const formattedDate = format(new Date(review.date), 'yyyy.MM.dd');
+  const router = useRouter();
 
   const [username, setUsername] = useState<string | null>(null);
 
@@ -33,15 +35,24 @@ const ReviewCard = (props: { review: Review }) => {
       setUsername('비회원');
       return;
     }
+
     const getUserName = async () => {
-      const userDoc = await getDoc(doc(db, 'users', review.writer));
-      // TODO: 문서를 혹시 못 읽어왔을 때의 예외처리
-      setUsername(userDoc.data()!.nickname);
+      try {
+        const userDoc = await getDoc(doc(db, 'users', review.writer));
+        if (userDoc.exists()) {
+          setUsername(userDoc.data().nickname);
+        }
+      } catch (error) {
+        console.error(
+          '데이터를 불러오는데 실패했습니다. 이전 페이지로 이동합니다.',
+          error
+        );
+        router.back();
+      }
     };
-    getUserName().finally(() => {
-      // TODO 에러 처리.
-    });
-  }, [review.writer]);
+
+    getUserName();
+  }, [review.writer, router]);
 
   if (username === null) {
     return <div>Loading...</div>;
