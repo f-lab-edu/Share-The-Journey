@@ -15,11 +15,6 @@ export default function Home() {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
 
   useEffect(() => {
-    // fetch('/api/places')
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     setPlaces(data.data);
-    //   });
     const fetchPlaces = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'places'));
