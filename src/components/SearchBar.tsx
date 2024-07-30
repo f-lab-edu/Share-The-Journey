@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Input } from '@nextui-org/react';
+
+import SearchIcon from '@/icons/searchIcon';
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,12 +22,14 @@ const SearchBar = () => {
         onSubmit={handleSearchSubmit}
         className="w-full flex justify-center"
       >
-        <input
+        <Input
           type="search"
           placeholder="여행지를 검색해보세요."
-          className="w-3/4 border rounded-3xl border-slate-300 px-3 py-2 mx-auto"
+          className="w-3/4 rounded-3xl px-4 py-2 mx-auto text-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          startContent={<SearchIcon size={20} />}
+          size="lg"
         />
       </form>
     </section>
