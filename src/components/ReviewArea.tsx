@@ -29,6 +29,7 @@ const ReviewCard = (props: { review: Review }) => {
   const router = useRouter();
 
   const [username, setUsername] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (review.writer === '비회원') {
@@ -43,11 +44,7 @@ const ReviewCard = (props: { review: Review }) => {
           setUsername(userDoc.data().nickname);
         }
       } catch (error) {
-        console.error(
-          '데이터를 불러오는데 실패했습니다. 이전 페이지로 이동합니다.',
-          error
-        );
-        router.back();
+        setError('리뷰 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
       }
     };
 
@@ -56,6 +53,12 @@ const ReviewCard = (props: { review: Review }) => {
 
   if (username === null) {
     return <div>Loading...</div>;
+  } else if (error) {
+    return (
+      <div className="mb-5 text-red-500 font-bold bg-white p-3 rounded-md">
+        {error}
+      </div>
+    );
   }
   return (
     <div key={review.id} className="mb-5 border p-3 rounded-md bg-white">
