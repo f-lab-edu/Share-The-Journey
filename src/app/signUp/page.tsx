@@ -2,9 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
 import auth from '@/app/auth';
-
+import db from '@/app/db';
 import Header from '@/components/Header';
 
 const Page = () => {
@@ -18,7 +19,12 @@ const Page = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         const user = res.user;
-        return updateProfile(user, { displayName: nickname });
+        const userRef = doc(db, 'users', user.uid);
+        return setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          nickname,
+        });
       })
       .then(() => {
         router.push('/');
