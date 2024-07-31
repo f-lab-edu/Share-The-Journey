@@ -79,7 +79,7 @@ const PlaceInfo = ({
       </h1>
       <div className="flex justify-between mb-3">
         <h3 className="font-bold mb-3 text-medium text-slate-400">
-          등록자{' '}
+          작성자{' '}
           <p className="font-medium pt-1 text-slate-600 text-sm">
             {registrant}
           </p>
