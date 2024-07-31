@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import currency from 'currency.js';
-import { Card, CardHeader, CardFooter, Image, Button } from '@nextui-org/react';
+import { Card, CardHeader, CardFooter, Image } from '@nextui-org/react';
 
+import StarIcon from '@/icons/starIcon';
 import { PlaceCardProps } from '@/types/place';
 
 const HomePlaceCard = ({
@@ -30,7 +31,7 @@ const HomePlaceCard = ({
             <p className="text-tiny text-white/60 uppercase font-bold">
               {location}
             </p>
-            <h4 className="text-white/90 font-medium text-xl">{name}</h4>
+            <h4 className="text-white/90 font-bold text-xl">{name}</h4>
           </CardHeader>
           <Image
             removeWrapper
@@ -38,19 +39,14 @@ const HomePlaceCard = ({
             className="z-0 w-full h-full object-cover"
             src={imgUrlStr}
           />
-          <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
-            <div className="flex flex-col flex-grow gap-1 items-start">
-              <p className="text-tiny text-white/60">평점: {score}</p>
-              <p className="text-sm text-white/60">가격: {priceText}</p>
+          <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100 font-semibold text-white/60">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex gap-1">
+                <StarIcon />
+                <p>{score}</p>
+              </div>
+              <p>{priceText}</p>
             </div>
-
-            <Button
-              radius="full"
-              size="md"
-              className="hover:cursor-pointer font-semibold bg-white"
-            >
-              상세보기
-            </Button>
           </CardFooter>
         </Card>
       </Link>
