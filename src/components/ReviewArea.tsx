@@ -13,6 +13,7 @@ import {
   orderBy,
   getDoc,
 } from 'firebase/firestore';
+import { Button } from '@nextui-org/react';
 
 import db from '@/app/db';
 import { Review } from '@/types/review';
@@ -61,15 +62,15 @@ const ReviewCard = (props: { review: Review }) => {
     );
   }
   return (
-    <div key={review.id} className="mb-5 border p-3 rounded-md bg-white">
+    <div key={review.id} className="my-3 p-3 border-b-1 last:border-0">
       <div className="flex justify-between">
-        <h3 className="text-lg font-bold">작성자: {username}</h3>
+        <h3 className="font-bold text-slate-700">{username}</h3>
         {/* <p className="font-semibold mb-1">
           별점: <span className="text-amber-400">{review.score}</span>
         </p> */}
       </div>
-      <p className="mb-1">{review.description}</p>
-      <p className="font-semibold text-zinc-300">작성일: {formattedDate}</p>
+      <p className="mb-1 text-sm">{review.description}</p>
+      <p className="font-semibold text-zinc-300">{formattedDate}</p>
     </div>
   );
 };
@@ -112,28 +113,43 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   };
 
   return (
-    <section className="w-9/12 mx-auto  bg-gray-300 p-3 rounded-md mb-10">
-      <h2 className="text-xl font-extrabold mb-5">리뷰</h2>
-      {reviews.length > 0 ? (
-        reviews.map((review, index) => (
-          <ReviewCard key={index} review={review} />
-        ))
-      ) : (
-        <p className="mb-5 border p-2 rounded-md bg-white">리뷰가 없습니다.</p>
-      )}
+    <section className="w-3/5 mx-auto mb-10">
+      <h2 className="text-xl font-extrabold mb-3 ml-2 text-slate-600">댓글</h2>
+      <div>
+        {reviews.length > 0 ? (
+          reviews.map((review, index) => {
+            return <ReviewCard key={index} review={review} />;
+          })
+        ) : (
+          <p className="mb-5 p-2 text-slate-400">
+            댓글이 없습니다. 의견을 공유해주세요.
+          </p>
+        )}
+      </div>
       <input
         type="text"
-        placeholder="리뷰를 작성해주세요."
+        placeholder={
+          user ? '댓글을 남겨주세요.' : '로그인 후 댓글을 남겨주세요.'
+        }
         value={newReview}
+        disabled={user ? false : true}
         onChange={(e) => setNewReview(e.target.value)}
-        className="w-full border p-2 rounded-md h-[100px]"
+        className="w-full h-[100px] border p-3 rounded-lg mb-2 text-sm focus:outline-none"
       />
-      <button
-        onClick={handleAddReview}
-        className="w-full bg-blue-500 text-white p-2 rounded-md mt-3"
-      >
-        등록
-      </button>
+      {newReview.length > 0 ? (
+        <Button
+          onClick={handleAddReview}
+          color="success"
+          variant="flat"
+          className="w-full text-green-600 font-semibold p-2 mt-1"
+        >
+          등록
+        </Button>
+      ) : (
+        <Button isDisabled className="w-full p-2">
+          등록
+        </Button>
+      )}
     </section>
   );
 };
