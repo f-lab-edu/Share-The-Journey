@@ -21,6 +21,15 @@ const fetchPlace = async (id: string): Promise<PlaceDetailProps | null> => {
   return null;
 };
 
+const getUserName = async (uid: string) => {
+  const userDoc = await getDoc(doc(db, 'users', uid));
+  if (userDoc.exists()) {
+    return userDoc.data().nickname;
+  }
+
+  return '유저의 이름을 가져오지 못했습니다.';
+};
+
 const Page = async ({ params }: { params: { id: string } }) => {
   const place = await fetchPlace(params.id);
 
@@ -53,7 +62,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
 export default Page;
 
-const PlaceInfo = ({
+const PlaceInfo = async ({
   name,
   location,
   price,
@@ -69,6 +78,7 @@ const PlaceInfo = ({
 
   const amenitiesText =
     amenities.length > 0 ? amenities.join(', ') : '정보 없음';
+  const userName = await getUserName(registrant);
 
   return (
     <section className="bg-white p-3 w-3/5 mx-auto mb-10 text-slate-600">
@@ -80,9 +90,7 @@ const PlaceInfo = ({
       <div className="flex justify-between mb-3">
         <h3 className="font-bold mb-3 text-medium text-slate-400">
           작성자{' '}
-          <p className="font-medium pt-1 text-slate-600 text-sm">
-            {registrant}
-          </p>
+          <p className="font-medium pt-1 text-slate-600 text-sm">{userName}</p>
         </h3>
         <div className="mb-3 font-bold text-slate-400">
           위치 <p className="font-medium text-sm text-slate-600">{location}</p>
