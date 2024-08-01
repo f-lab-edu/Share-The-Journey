@@ -62,7 +62,7 @@ const ReviewCard = (props: { review: Review }) => {
     );
   }
   return (
-    <div key={review.id} className="my-3 p-3">
+    <div key={review.id} className="my-3 p-3 border-b-1 last:border-0">
       <div className="flex justify-between">
         <h3 className="font-bold text-slate-700">{username}</h3>
         {/* <p className="font-semibold mb-1">
@@ -115,20 +115,17 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   return (
     <section className="w-3/5 mx-auto mb-10">
       <h2 className="text-xl font-extrabold mb-3 ml-2 text-slate-600">댓글</h2>
-      {reviews.length > 0 ? (
-        reviews.map((review, index) => {
-          const bottomBorder = index === reviews.length - 1 ? '' : 'border-b-1';
-          return (
-            <div key={index} className={bottomBorder}>
-              <ReviewCard review={review} />
-            </div>
-          );
-        })
-      ) : (
-        <p className="mb-5 p-2 text-slate-400">
-          댓글이 없습니다. 의견을 공유해주세요.
-        </p>
-      )}
+      <div>
+        {reviews.length > 0 ? (
+          reviews.map((review, index) => {
+            return <ReviewCard key={index} review={review} />;
+          })
+        ) : (
+          <p className="mb-5 p-2 text-slate-400">
+            댓글이 없습니다. 의견을 공유해주세요.
+          </p>
+        )}
+      </div>
       <input
         type="text"
         placeholder={
@@ -137,7 +134,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
         value={newReview}
         disabled={user ? false : true}
         onChange={(e) => setNewReview(e.target.value)}
-        className="w-full h-[100px] border p-3 rounded-lg mb-2 text-sm"
+        className="w-full h-[100px] border p-3 rounded-lg mb-2 text-sm focus:outline-none"
       />
       {newReview.length > 0 ? (
         <Button
