@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
+import { Input, Button } from '@nextui-org/react';
 import auth from '@/app/auth';
 import db from '@/app/db';
 import Header from '@/components/Header';
@@ -12,6 +13,7 @@ const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -30,8 +32,9 @@ const Page = () => {
         router.push('/');
       })
       .catch((err) => {
-        alert('회원가입에 실패했습니다.');
-        console.error(err);
+        if (err.message.includes('auth/email-already-in-use')) {
+          setError('email');
+        }
       });
   };
 
@@ -42,42 +45,50 @@ const Page = () => {
         Sign Up
       </h1>
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
-        <form className="mt-1" onSubmit={handleSubmit}>
-          <label className="block">
-            <h3 className="font-semibold">이메일</h3>
-            <input
-              className="my-2 rounded-md w-full p-1 px-2"
+        <form className="mt-1 flex flex-col gap-2" onSubmit={handleSubmit}>
+          <div className="mb-3 font-semibold">
+            <Input
               type="email"
-              name="email"
+              label="이메일"
               value={email}
+              isInvalid={error === 'email'}
+              errorMessage="중복된 이메일 입니다"
+              isRequired
+              placeholder="이메일을 입력해주세요."
+              labelPlacement="outside"
               onChange={(e) => setEmail(e.target.value)}
             />
-          </label>
-          <label className="block">
-            <h3 className="font-semibold">비밀번호</h3>
-            <input
-              className="rounded-md w-full my-2 p-1 px-2"
+          </div>
+          <div className="mb-3 font-semibold">
+            <Input
               type="password"
-              name="password"
+              label="비밀번호"
               value={password}
+              isRequired
+              placeholder="비밀번호를 입력해주세요."
+              labelPlacement="outside"
               onChange={(e) => setPassword(e.target.value)}
             />
-          </label>
-          <label className="block">
-            <h3 className="font-semibold">닉네임</h3>
-            <input
-              className="rounded-md w-full my-2 p-1 px-2"
+          </div>
+          <div className="mb-3 font-semibold">
+            <Input
               type="text"
-              name={nickname}
+              label="닉네임"
+              value={nickname}
+              isRequired
+              placeholder="닉네임을 입력해주세요."
+              labelPlacement="outside"
               onChange={(e) => setNickname(e.target.value)}
             />
-          </label>
-          <button
-            className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold my-2"
+          </div>
+          <Button
+            color="success"
+            radius="lg"
+            className="w-full text-white font-semibold"
             type="submit"
           >
             Sign Up
-          </button>
+          </Button>
         </form>
       </div>
     </>
