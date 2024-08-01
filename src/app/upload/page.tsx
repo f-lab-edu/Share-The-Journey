@@ -73,6 +73,7 @@ const Page = () => {
       const newPlaceData = {
         ...newPlace,
         imgUrl: imgUrl,
+        registrant: user.uid,
       };
 
       await addDoc(collection(db, 'places'), newPlaceData);
