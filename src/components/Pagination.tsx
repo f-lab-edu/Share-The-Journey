@@ -18,6 +18,11 @@ const PaginationBar = ({
   contentsPerPage,
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalContents / contentsPerPage);
+  console.log(currentPage, contentsPerPage, totalContents);
+
+  if (totalContents === 0) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex justify-center mb-5">
@@ -25,6 +30,7 @@ const PaginationBar = ({
         isCompact={isCompact}
         showControls
         total={totalPages}
+        initialPage={1}
         page={currentPage}
         onChange={(page) => paginate(page)}
         size={size}
