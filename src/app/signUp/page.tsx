@@ -41,6 +41,8 @@ const Page = () => {
       .catch((err) => {
         if (err.message.includes('auth/email-already-in-use')) {
           setError('email');
+        } else if (err.message.includes('auth/weak-password')) {
+          setError('password');
         }
       });
   };
@@ -75,6 +77,8 @@ const Page = () => {
               type="password"
               label="비밀번호"
               value={password}
+              isInvalid={error === 'password'}
+              errorMessage="비밀번호는 6자 이상이어야 합니다."
               isRequired
               placeholder="비밀번호를 입력해주세요."
               labelPlacement="outside"
