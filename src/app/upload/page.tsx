@@ -183,7 +183,7 @@ const Page = () => {
             >
               <Checkbox
                 size="md"
-                value="bathroom"
+                value="화장실"
                 checked={(newPlace.amenities ?? []).includes('화장실')}
                 onChange={handleCheckboxChange}
               >
@@ -191,7 +191,7 @@ const Page = () => {
               </Checkbox>
               <Checkbox
                 size="md"
-                value="parking"
+                value="주차장"
                 checked={(newPlace.amenities ?? []).includes('주차장')}
                 onChange={handleCheckboxChange}
               >
