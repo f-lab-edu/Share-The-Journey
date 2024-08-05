@@ -66,9 +66,6 @@ const ReviewCard = (props: { review: Review }) => {
     <div key={review.id} className="my-3 p-3 border-b-1 last:border-0">
       <div className="flex justify-between">
         <h3 className="font-bold text-slate-700">{username}</h3>
-        {/* <p className="font-semibold mb-1">
-          별점: <span className="text-amber-400">{review.score}</span>
-        </p> */}
       </div>
       <p className="mb-1 text-sm">{review.description}</p>
       <p className="font-semibold text-zinc-300">{formattedDate}</p>
