@@ -18,7 +18,6 @@ const PaginationBar = ({
   contentsPerPage,
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalContents / contentsPerPage);
-  console.log(currentPage, contentsPerPage, totalContents);
 
   if (totalContents === 0) {
     return <div>Loading...</div>;
