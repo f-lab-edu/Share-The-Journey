@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
@@ -18,7 +18,8 @@ export default function Home() {
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'places'));
+        const q = query(collection(db, 'places'), orderBy('score', 'desc'));
+        const querySnapshot = await getDocs(q);
         const placeData: PlaceDetailProps[] = [];
 
         querySnapshot.forEach((doc) => {
