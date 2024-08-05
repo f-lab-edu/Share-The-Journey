@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './providers';
+import { Noto_Sans } from 'next/font/google';
+
+const noto = Noto_Sans({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+});
 
 export const metadata: Metadata = {
   title: 'Share The Journey',
@@ -14,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="container mx-auto bg-white px-4">
+      <body className={`container mx-auto bg-white px-4 ${noto.className}`}>
         <Providers>{children}</Providers>
       </body>
     </html>
