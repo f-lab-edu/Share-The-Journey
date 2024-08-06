@@ -6,12 +6,15 @@ import { useSearchParams } from 'next/navigation';
 import { PlaceCardProps } from '@/types/place';
 
 import SearchResultCard from './SearchResultCard';
+import PaginationBar from './Pagination';
 import db from '@/app/db';
 import { collection, getDocs } from 'firebase/firestore';
 
 const SearchResult = () => {
   const [searchResult, setSearchResult] = useState<PlaceCardProps[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const contentsPerPage = 5;
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
 
@@ -68,34 +71,57 @@ const SearchResult = () => {
     fetchSearchResults();
   }, [query]);
 
+  const indexOfLastContent = currentPage * contentsPerPage;
+  const indexOfFirstContent = indexOfLastContent - contentsPerPage;
+  const currentContents = searchResult.slice(
+    indexOfFirstContent,
+    indexOfLastContent
+  );
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <section className="w-8/12 mx-auto mt-20">
-      {error && (
-        <>
-          <p className="text-2xl text-center text-red-400 font-semibold">
-            {error}
-          </p>
-          <p className="text-center text-red-400 mt-2">다시 시도해 주세요.</p>
-        </>
-      )}
-      {!error &&
-        searchResult.length > 0 &&
-        searchResult.map((place) => (
-          <div key={place.id}>
-            <SearchResultCard {...place} />
-            <hr className="w-10/12 mx-auto" />
-          </div>
-        ))}
-      {!error && searchResult.length === 0 && (
-        <>
-          <p className="text-2xl text-center text-slate-400 font-semibold">
-            검색 결과를 찾을 수 없습니다.
-          </p>
-          <p className="text-center text-slate-400 mt-2">
-            다른 검색어로 다시 시도해주세요.
-          </p>
-        </>
-      )}
+      <div className="mb-14">
+        {error && (
+          <>
+            <p className="text-2xl text-center text-red-400 font-semibold">
+              {error}
+            </p>
+            <p className="text-center text-red-400 mt-2">다시 시도해 주세요.</p>
+          </>
+        )}
+        {!error && searchResult.length > 0 && (
+          <>
+            {currentContents.map((place) => (
+              <div key={place.id}>
+                <SearchResultCard {...place} />
+                <hr className="w-10/12 mx-auto" />
+              </div>
+            ))}
+            <div className="mt-14">
+              <PaginationBar
+                size="lg"
+                isCompact={false}
+                currentPage={currentPage}
+                totalContents={searchResult.length}
+                contentsPerPage={contentsPerPage}
+                paginate={paginate}
+              />
+            </div>
+          </>
+        )}
+        {!error && searchResult.length === 0 && (
+          <>
+            <p className="text-2xl text-center text-slate-400 font-semibold">
+              검색 결과를 찾을 수 없습니다.
+            </p>
+            <p className="text-center text-slate-400 mt-2">
+              다른 검색어로 다시 시도해주세요.
+            </p>
+          </>
+        )}
+      </div>
     </section>
   );
 };

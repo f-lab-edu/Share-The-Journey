@@ -18,6 +18,7 @@ import { Button } from '@nextui-org/react';
 import db from '@/app/db';
 import { Review } from '@/types/review';
 import { AuthContext } from '@/app/AuthContext';
+import PaginationBar from './Pagination';
 
 const addReview = async (review: Omit<Review, 'id'>) => {
   const newReviewRef = doc(collection(db, 'reviews'));
@@ -65,9 +66,6 @@ const ReviewCard = (props: { review: Review }) => {
     <div key={review.id} className="my-3 p-3 border-b-1 last:border-0">
       <div className="flex justify-between">
         <h3 className="font-bold text-slate-700">{username}</h3>
-        {/* <p className="font-semibold mb-1">
-          별점: <span className="text-amber-400">{review.score}</span>
-        </p> */}
       </div>
       <p className="mb-1 text-sm">{review.description}</p>
       <p className="font-semibold text-zinc-300">{formattedDate}</p>
@@ -78,7 +76,9 @@ const ReviewCard = (props: { review: Review }) => {
 const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
+  const contentsPerPage = 5;
 
   useEffect(() => {
     const reviewsQuery = query(
@@ -112,12 +112,21 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
     setNewReview('');
   };
 
+  const indexOfLastContent = currentPage * contentsPerPage;
+  const indexOfFirstContent = indexOfLastContent - contentsPerPage;
+  const currentContents = reviews.slice(
+    indexOfFirstContent,
+    indexOfLastContent
+  );
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <section className="w-3/5 mx-auto mb-10">
       <h2 className="text-xl font-extrabold mb-3 ml-2 text-slate-600">댓글</h2>
       <div>
         {reviews.length > 0 ? (
-          reviews.map((review, index) => {
+          currentContents.map((review, index) => {
             return <ReviewCard key={index} review={review} />;
           })
         ) : (
@@ -126,6 +135,14 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
           </p>
         )}
       </div>
+      <PaginationBar
+        size="sm"
+        isCompact={true}
+        currentPage={currentPage}
+        totalContents={reviews.length}
+        contentsPerPage={contentsPerPage}
+        paginate={paginate}
+      />
       <input
         type="text"
         placeholder={

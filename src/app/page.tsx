@@ -1,26 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import HomePlaceCard from '@/components/HomePlaceCard';
+import PaginationBar from '@/components/Pagination';
 import db from './db';
 import { PlaceDetailProps } from '@/types/place';
 
 export default function Home() {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const contentsPerPage = 5;
 
   useEffect(() => {
-    // fetch('/api/places')
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     setPlaces(data.data);
-    //   });
     const fetchPlaces = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'places'));
+        const q = query(collection(db, 'places'), orderBy('score', 'desc'));
+        const querySnapshot = await getDocs(q);
         const placeData: PlaceDetailProps[] = [];
 
         querySnapshot.forEach((doc) => {
@@ -36,6 +35,12 @@ export default function Home() {
     fetchPlaces();
   }, []);
 
+  const indexOfLastContent = currentPage * contentsPerPage;
+  const indexOfFirstContent = indexOfLastContent - contentsPerPage;
+  const currentContents = places.slice(indexOfFirstContent, indexOfLastContent);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <div>
       <Header />
@@ -48,7 +53,7 @@ export default function Home() {
       </section>
       <SearchBar />
       <section className="mt-10 w-8/12 mx-auto">
-        {places.map((place) => (
+        {currentContents.map((place) => (
           <HomePlaceCard
             imgUrl={place.imgUrl}
             name={place.name}
@@ -59,6 +64,14 @@ export default function Home() {
             id={place.id}
           />
         ))}
+        <PaginationBar
+          size="lg"
+          isCompact={false}
+          currentPage={currentPage}
+          totalContents={places.length}
+          contentsPerPage={contentsPerPage}
+          paginate={paginate}
+        />
       </section>
     </div>
   );
