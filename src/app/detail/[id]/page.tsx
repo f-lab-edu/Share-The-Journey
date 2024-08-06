@@ -1,10 +1,10 @@
-import Image from 'next/image';
 import currency from 'currency.js';
 
 import { doc, getDoc } from 'firebase/firestore';
 
 import Header from '@/components/Header';
 import ReviewArea from '@/components/ReviewArea';
+import ImgCarousel from '@/components/ImgCarousel';
 import db from '@/app/db';
 
 import { PlaceDetailProps } from '@/types/place';
@@ -42,18 +42,10 @@ const Page = async ({ params }: { params: { id: string } }) => {
     );
   }
 
-  const imgUrlStr = place.imgUrl ? place.imgUrl : '/default.png';
-
   return (
     <>
       <Header />
-      <Image
-        src={imgUrlStr}
-        alt={place.name}
-        width={1200}
-        height={600}
-        className="!h-[400px] !w-[700px] mx-auto my-20 rounded-lg"
-      />
+      <ImgCarousel imgUrls={place.imgUrls} />
       <PlaceInfo {...place} />
       <ReviewArea placeId={params.id} />
     </>

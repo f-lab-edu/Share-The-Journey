@@ -15,7 +15,7 @@ import { NewPlaceForm } from '@/types/place';
 const Page = () => {
   const { user } = useContext(AuthContext);
   const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({});
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const router = useRouter();
 
   if (!user) {
@@ -47,7 +47,7 @@ const Page = () => {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      setFiles(Array.from(e.target.files));
     }
   };
 
@@ -61,18 +61,24 @@ const Page = () => {
     }
 
     try {
-      let imgUrl = '';
+      let imgUrls: string[] = [];
 
-      if (file) {
+      if (files.length > 0) {
         const storage = getStorage();
-        const imageRef = ref(storage, `images/${file.name}`);
-        await uploadBytes(imageRef, file);
-        imgUrl = await getDownloadURL(imageRef);
+        const uploadPromises = files.map((file) => {
+          const imageRef = ref(storage, `images/${file.name}`);
+          return uploadBytes(imageRef, file).then(() =>
+            getDownloadURL(imageRef)
+          );
+        });
+        imgUrls = await Promise.all(uploadPromises);
+      } else {
+        imgUrls = ['/default.png'];
       }
 
       const newPlaceData = {
         ...newPlace,
-        imgUrl: imgUrl,
+        imgUrls: imgUrls,
         registrant: user.uid,
       };
 
@@ -210,6 +216,7 @@ const Page = () => {
               hover:file:bg-blue-200 hover:file:text-slate-400"
               type="file"
               accept="image/*"
+              multiple={true}
               onChange={handleFileChange}
             />
           </label>

@@ -50,7 +50,7 @@ export default function Home() {
       <section className="mt-10 w-8/12 mx-auto">
         {places.map((place) => (
           <HomePlaceCard
-            imgUrl={place.imgUrl}
+            imgUrls={place.imgUrls}
             name={place.name}
             location={place.location}
             price={place.price}

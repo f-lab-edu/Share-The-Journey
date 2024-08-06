@@ -69,7 +69,7 @@ const SearchResult = () => {
   }, [query]);
 
   return (
-    <section className="w-8/12 mx-auto mt-20">
+    <section className="w-8/12 mx-auto mt-14">
       {error && (
         <>
           <p className="text-2xl text-center text-red-400 font-semibold">
@@ -81,9 +81,9 @@ const SearchResult = () => {
       {!error &&
         searchResult.length > 0 &&
         searchResult.map((place) => (
-          <div key={place.id}>
+          <div key={place.id} className="border-b-1 last:border-0">
             <SearchResultCard {...place} />
-            <hr className="w-10/12 mx-auto" />
+            {/* <hr className="w-10/12 mx-auto " /> */}
           </div>
         ))}
       {!error && searchResult.length === 0 && (

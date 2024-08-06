@@ -6,7 +6,7 @@ import StarIcon from '@/icons/starIcon';
 import { PlaceCardProps } from '@/types/place';
 
 const HomePlaceCard = ({
-  imgUrl,
+  imgUrls,
   name,
   score,
   location,
@@ -17,7 +17,6 @@ const HomePlaceCard = ({
     price > 0
       ? `${currency(price, { separator: ',', precision: 1 }).format()}`
       : '무료';
-  const imgUrlStr = imgUrl ? imgUrl : '/default.png';
 
   return (
     <section className="w-9/12 mb-8 mx-auto rounded-xl overflow-hidden">
@@ -37,7 +36,7 @@ const HomePlaceCard = ({
             removeWrapper
             alt="Relaxing app background"
             className="z-0 w-full h-full object-cover"
-            src={imgUrlStr}
+            src={imgUrls[0]}
           />
           <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100 font-semibold text-white/60">
             <div className="flex items-center justify-between w-full">
