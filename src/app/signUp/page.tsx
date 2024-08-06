@@ -15,7 +15,9 @@ const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<'email' | 'invalid' | 'password' | null>(
+    null
+  );
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
