@@ -51,6 +51,12 @@ const Page = () => {
     }
   };
 
+  const encodeFileName = (fileName: string) => {
+    const utf8FileName = new TextEncoder().encode(fileName);
+    const binary = String.fromCharCode(...utf8FileName);
+    return btoa(binary);
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newPlaceValidateInfo = validateNewPlaceForm(newPlace as NewPlaceForm);
@@ -66,7 +72,8 @@ const Page = () => {
       if (files.length > 0) {
         const storage = getStorage();
         const uploadPromises = files.map((file) => {
-          const imageRef = ref(storage, `images/${file.name}`);
+          const encodedFileName = encodeFileName(file.name);
+          const imageRef = ref(storage, `images/${encodedFileName}`);
           return uploadBytes(imageRef, file).then(() =>
             getDownloadURL(imageRef)
           );
