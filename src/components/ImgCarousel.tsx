@@ -34,20 +34,34 @@ const ImgCarousel = ({ imgUrls }: { imgUrls: string[] }) => {
 
   return (
     <Swiper {...swiperParams}>
-      {imgUrls.map((url, idx) => (
-        <SwiperSlide key={idx}>
+      {imgUrls && imgUrls.length > 0 ? (
+        imgUrls.map((url, idx) => (
+          <SwiperSlide key={idx}>
+            <div className="w-full h-[350px] max-w-[600px] mx-auto">
+              <Image
+                src={url}
+                alt={`Slide image ${idx + 1}`}
+                fill
+                sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="rounded-lg"
+                priority={idx === 0}
+              />
+            </div>
+          </SwiperSlide>
+        ))
+      ) : (
+        <SwiperSlide>
           <div className="w-full h-[350px] max-w-[600px] mx-auto">
             <Image
-              src={url}
-              alt={`Slide image ${idx + 1}`}
+              src="/default.png"
+              alt="default image"
               fill
               sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="rounded-lg"
-              priority={idx === 0}
             />
           </div>
         </SwiperSlide>
-      ))}
+      )}
     </Swiper>
   );
 };

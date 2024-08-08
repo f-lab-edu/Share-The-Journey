@@ -17,12 +17,14 @@ const SearchResultCard = ({
       ? `${currency(price, { separator: ',', precision: 1 }).format()}`
       : '무료';
 
+  const imgUrlStr = imgUrls[0] ? imgUrls[0] : '/default.png';
+
   return (
     <Link href={`/detail/${id}`}>
       <section className="w-10/12 mx-auto my-5 flex p-1">
         <Image
           className="rounded-lg !h-[210px]"
-          src={imgUrls[0]}
+          src={imgUrlStr}
           alt={name}
           width={350}
           height={250}

@@ -79,8 +79,6 @@ const Page = () => {
           );
         });
         imgUrls = await Promise.all(uploadPromises);
-      } else {
-        imgUrls = ['/default.png'];
       }
 
       const newPlaceData = {
