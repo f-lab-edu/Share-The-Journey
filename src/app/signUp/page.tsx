@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { Input, Button } from '@nextui-org/react';
 
@@ -15,7 +15,7 @@ const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [error, setError] = useState<'email' | 'invalid' | 'password' | null>(
+  const [error, setError] = useState<'emailInUse' | 'invalidEmail' | 'weakPassword' | null>(
     null
   );
   const router = useRouter();
@@ -23,7 +23,7 @@ const Page = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!validateEmail(email)) {
-      setError('invalid');
+      setError('invalidEmail');
       return;
     }
     createUserWithEmailAndPassword(auth, email, password)
@@ -41,13 +41,26 @@ const Page = () => {
         router.push('/');
       })
       .catch((err) => {
-        if (err.message.includes('auth/email-already-in-use')) {
-          setError('email');
-        } else if (err.message.includes('auth/weak-password')) {
-          setError('password');
+        if (err.message.includes(AuthErrorCodes.EMAIL_EXISTS)) {
+          setError('emailInUse');
+        } else if (err.message.includes(AuthErrorCodes.WEAK_PASSWORD)) {
+          setError('weakPassword');
+        } else {
+          // 에러 fallback 옵션 추가할 것
         }
       });
   };
+
+  const getErrorMessage = () => {
+    switch (error) {
+      case 'emailInUse':
+        return '이미 사용중인 이메일입니다.';
+      case 'invalidEmail':
+        return '이메일 형식이 올바르지 않습니다.'
+      case 'weakPassword':
+        return '비밀번호는 6자 이상이어야 합니다.'
+    }
+  }
 
   return (
     <>
@@ -62,12 +75,8 @@ const Page = () => {
               type="text"
               label="이메일"
               value={email}
-              isInvalid={error === 'email' || error === 'invalid'}
-              errorMessage={
-                error === 'email'
-                  ? '이미 사용중인 이메일입니다.'
-                  : '이메일 형식이 올바르지 않습니다.'
-              }
+              isInvalid={error === 'emailInUse' || error === 'invalidEmail'}
+              errorMessage={getErrorMessage()}
               isRequired
               placeholder="이메일을 입력해주세요."
               labelPlacement="outside"
@@ -79,8 +88,8 @@ const Page = () => {
               type="password"
               label="비밀번호"
               value={password}
-              isInvalid={error === 'password'}
-              errorMessage="비밀번호는 6자 이상이어야 합니다."
+              isInvalid={error === 'weakPassword'}
+              errorMessage={getErrorMessage()}
               isRequired
               placeholder="비밀번호를 입력해주세요."
               labelPlacement="outside"

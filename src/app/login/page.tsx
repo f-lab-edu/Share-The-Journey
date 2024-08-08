@@ -17,7 +17,7 @@ const Page = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
-      .then((res) => {
+      .then((_res) => {
         router.push('/');
       })
       .catch((err) => {
