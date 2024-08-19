@@ -2,24 +2,35 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
+import { Input, Button } from '@nextui-org/react';
+
 import auth from '@/app/auth';
 import db from '@/app/db';
 import Header from '@/components/Header';
+import { validateEmail } from '@/utils/validate';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
+  const [error, setError] = useState<'emailInUse' | 'invalidEmail' | 'weakPassword' | null>(
+    null
+  );
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!validateEmail(email)) {
+      setError('invalidEmail');
+      return;
+    }
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         const user = res.user;
         const userRef = doc(db, 'users', user.uid);
+
         return setDoc(userRef, {
           uid: user.uid,
           email: user.email,
@@ -30,10 +41,26 @@ const Page = () => {
         router.push('/');
       })
       .catch((err) => {
-        alert('회원가입에 실패했습니다.');
-        console.error(err);
+        if (err.message.includes(AuthErrorCodes.EMAIL_EXISTS)) {
+          setError('emailInUse');
+        } else if (err.message.includes(AuthErrorCodes.WEAK_PASSWORD)) {
+          setError('weakPassword');
+        } else {
+          // 에러 fallback 옵션 추가할 것
+        }
       });
   };
+
+  const getErrorMessage = () => {
+    switch (error) {
+      case 'emailInUse':
+        return '이미 사용중인 이메일입니다.';
+      case 'invalidEmail':
+        return '이메일 형식이 올바르지 않습니다.'
+      case 'weakPassword':
+        return '비밀번호는 6자 이상이어야 합니다.'
+    }
+  }
 
   return (
     <>
@@ -42,42 +69,52 @@ const Page = () => {
         Sign Up
       </h1>
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
-        <form className="mt-1" onSubmit={handleSubmit}>
-          <label className="block">
-            <h3 className="font-semibold">이메일</h3>
-            <input
-              className="my-2 rounded-md w-full p-1 px-2"
-              type="email"
-              name="email"
+        <form className="mt-1 flex flex-col gap-2" onSubmit={handleSubmit}>
+          <div className="mb-3 font-semibold">
+            <Input
+              type="text"
+              label="이메일"
               value={email}
+              isInvalid={error === 'emailInUse' || error === 'invalidEmail'}
+              errorMessage={getErrorMessage()}
+              isRequired
+              placeholder="이메일을 입력해주세요."
+              labelPlacement="outside"
               onChange={(e) => setEmail(e.target.value)}
             />
-          </label>
-          <label className="block">
-            <h3 className="font-semibold">비밀번호</h3>
-            <input
-              className="rounded-md w-full my-2 p-1 px-2"
+          </div>
+          <div className="mb-3 font-semibold">
+            <Input
               type="password"
-              name="password"
+              label="비밀번호"
               value={password}
+              isInvalid={error === 'weakPassword'}
+              errorMessage={getErrorMessage()}
+              isRequired
+              placeholder="비밀번호를 입력해주세요."
+              labelPlacement="outside"
               onChange={(e) => setPassword(e.target.value)}
             />
-          </label>
-          <label className="block">
-            <h3 className="font-semibold">닉네임</h3>
-            <input
-              className="rounded-md w-full my-2 p-1 px-2"
+          </div>
+          <div className="mb-3 font-semibold">
+            <Input
               type="text"
-              name={nickname}
+              label="닉네임"
+              value={nickname}
+              isRequired
+              placeholder="닉네임을 입력해주세요."
+              labelPlacement="outside"
               onChange={(e) => setNickname(e.target.value)}
             />
-          </label>
-          <button
-            className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold my-2"
+          </div>
+          <Button
+            color="success"
+            radius="lg"
+            className="w-full text-white font-semibold"
             type="submit"
           >
             Sign Up
-          </button>
+          </Button>
         </form>
       </div>
     </>

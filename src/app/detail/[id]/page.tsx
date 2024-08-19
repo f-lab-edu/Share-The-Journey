@@ -1,8 +1,5 @@
 import currency from 'currency.js';
-
 import { doc, getDoc } from 'firebase/firestore';
-
-import Header from '@/components/Header';
 import ReviewArea from '@/components/ReviewArea';
 import ImgCarousel from '@/components/ImgCarousel';
 import db from '@/app/db';
@@ -27,24 +24,18 @@ const getUserName = async (uid: string) => {
     return userDoc.data().nickname;
   }
 
-  return '유저의 이름을 가져오지 못했습니다.';
+  return null;
 };
 
 const Page = async ({ params }: { params: { id: string } }) => {
   const place = await fetchPlace(params.id);
 
   if (!place) {
-    return (
-      <>
-        <Header />
-        <div>해당 장소가 존재하지 않습니다.</div>
-      </>
-    );
+    return <div>해당 장소가 존재하지 않습니다.</div>;
   }
 
   return (
     <>
-      <Header />
       <ImgCarousel imgUrls={place.imgUrls} />
       <PlaceInfo {...place} />
       <ReviewArea placeId={params.id} />
@@ -70,7 +61,8 @@ const PlaceInfo = async ({
 
   const amenitiesText =
     amenities.length > 0 ? amenities.join(', ') : '정보 없음';
-  const userName = await getUserName(registrant);
+  const userName =
+    (await getUserName(registrant)) ?? '유저의 이름을 가져오지 못했습니다.';
 
   return (
     <section className="bg-white p-3 w-3/5 mx-auto mb-10 text-slate-600">
