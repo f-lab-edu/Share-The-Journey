@@ -20,7 +20,7 @@ const PaginationBar = ({
   const totalPages = Math.ceil(totalContents / contentsPerPage);
 
   if (totalContents === 0) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (
