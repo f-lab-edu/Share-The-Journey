@@ -1,5 +1,5 @@
 export type PlaceCardProps = {
-  imgUrl?: string;
+  imgUrls: string[];
   name: string;
   location: string;
   price: number;
@@ -20,6 +20,6 @@ export type NewPlaceForm = {
   score: number;
   review: string;
   amenities: string[];
-  imgUrl: string | null;
+  imgUrls: string[];
   registrant: string;
 };

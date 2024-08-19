@@ -5,7 +5,7 @@ import currency from 'currency.js';
 import { PlaceCardProps } from '@/types/place';
 
 const SearchResultCard = ({
-  imgUrl,
+  imgUrls,
   name,
   location,
   price,
@@ -16,7 +16,8 @@ const SearchResultCard = ({
     price > 0
       ? `${currency(price, { separator: ',', precision: 1 }).format()}`
       : '무료';
-  const imgUrlStr = imgUrl ? imgUrl : '/default.png';
+
+  const imgUrlStr = imgUrls[0] ? imgUrls[0] : '/default.png';
 
   return (
     <Link href={`/detail/${id}`}>

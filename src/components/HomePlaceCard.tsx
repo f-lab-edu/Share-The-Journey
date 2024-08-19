@@ -6,7 +6,7 @@ import StarIcon from '@/icons/starIcon';
 import { PlaceCardProps } from '@/types/place';
 
 const HomePlaceCard = ({
-  imgUrl,
+  imgUrls,
   name,
   score,
   location,
@@ -17,7 +17,8 @@ const HomePlaceCard = ({
     price > 0
       ? `${currency(price, { separator: ',', precision: 1 }).format()}`
       : '무료';
-  const imgUrlStr = imgUrl ? imgUrl : '/default.png';
+
+  const imgUrlStr = imgUrls[0] ? imgUrls[0] : '/default.png';
 
   return (
     <section className="w-9/12 mb-8 mx-auto rounded-xl overflow-hidden">
