@@ -1,45 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import HomePlaceCard from '@/components/HomePlaceCard';
 import PaginationBar from '@/components/Pagination';
-import db from './db';
-import { PlaceDetailProps } from '@/types/place';
+import { useFetchPlaces } from '@/hooks/useFetchPlaces';
 
 export default function Home() {
-  const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const contentsPerPage = 5;
-
-  useEffect(() => {
-    const fetchPlaces = async () => {
-      try {
-        const q = query(collection(db, 'places'), orderBy('score', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const placeData: PlaceDetailProps[] = [];
-
-        querySnapshot.forEach((doc) => {
-          placeData.push({ id: doc.id, ...doc.data() } as PlaceDetailProps);
-        });
-
-        setPlaces(placeData);
-      } catch (e) {
-        console.error('Error getting documents: ', e);
-      }
-    };
-
-    fetchPlaces();
-  }, []);
-
-  const indexOfLastContent = currentPage * contentsPerPage;
-  const indexOfFirstContent = indexOfLastContent - contentsPerPage;
-  const currentContents = places.slice(indexOfFirstContent, indexOfLastContent);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const { places, currentPage, totalPlaceCount, paginate } =
+    useFetchPlaces(contentsPerPage);
 
   return (
     <div>
@@ -53,7 +23,7 @@ export default function Home() {
       </section>
       <SearchBar />
       <section className="mt-10 w-8/12 mx-auto">
-        {currentContents.map((place) => (
+        {places.map((place) => (
           <HomePlaceCard
             imgUrls={place.imgUrls}
             name={place.name}
@@ -68,7 +38,7 @@ export default function Home() {
           size="lg"
           isCompact={false}
           currentPage={currentPage}
-          totalContents={places.length}
+          totalContents={totalPlaceCount}
           contentsPerPage={contentsPerPage}
           paginate={paginate}
         />
