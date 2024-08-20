@@ -10,15 +10,11 @@ import {
   limit,
   QueryDocumentSnapshot,
   getCountFromServer,
-  where,
 } from 'firebase/firestore';
 import db from '@/app/db';
 import { PlaceDetailProps } from '@/types/place';
 
-export const useFetchPlaces = (
-  contentsPerPage: number,
-  searchQuery: string = ''
-) => {
+export const useFetchPlaces = (contentsPerPage: number) => {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
@@ -28,21 +24,12 @@ export const useFetchPlaces = (
   const fetchTotalPlacesCount = useCallback(async () => {
     try {
       let countQuery = query(collection(db, 'places'));
-
-      if (searchQuery) {
-        countQuery = query(
-          collection(db, 'places'),
-          where('name', '>=', searchQuery),
-          where('name', '<=', searchQuery + '\uf8ff')
-        );
-      }
-
       const snapshot = await getCountFromServer(countQuery);
       setTotalPlaceCount(snapshot.data().count);
     } catch (e) {
       console.error('Error getting documents: ', e);
     }
-  }, [searchQuery]);
+  }, []);
 
   const fetchPlaces = useCallback(
     async (page: number) => {
@@ -57,30 +44,9 @@ export const useFetchPlaces = (
           limit(contentsPerPage)
         );
 
-        if (searchQuery) {
-          q = query(
-            collection(db, 'places'),
-            where('name', '>=', searchQuery),
-            where('name', '<=', searchQuery + '\uf8ff'),
-            orderBy('score', 'desc'),
-            limit(contentsPerPage)
-          );
-        }
-
         if (lastDoc && page > 1) {
           q = query(
             collection(db, 'places'),
-            orderBy('score', 'desc'),
-            startAfter(lastDoc),
-            limit(contentsPerPage)
-          );
-        }
-
-        if (searchQuery) {
-          q = query(
-            collection(db, 'places'),
-            where('name', '>=', searchQuery),
-            where('name', '<=', searchQuery + '\uf8ff'),
             orderBy('score', 'desc'),
             startAfter(lastDoc),
             limit(contentsPerPage)
@@ -107,7 +73,7 @@ export const useFetchPlaces = (
         setIsLoading(false);
       }
     },
-    [lastDoc, contentsPerPage, searchQuery, isLoading]
+    [lastDoc, contentsPerPage, isLoading]
   );
 
   useEffect(() => {
