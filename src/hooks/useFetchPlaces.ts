@@ -9,27 +9,19 @@ import {
   startAfter,
   limit,
   QueryDocumentSnapshot,
-  getCountFromServer,
 } from 'firebase/firestore';
 import db from '@/app/db';
 import { PlaceDetailProps } from '@/types/place';
 
-export const useFetchPlaces = (contentsPerPage: number) => {
+export const useFetchPlaces = (
+  contentsPerPage: number,
+  searchQuery?: string | null
+) => {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
-  const [totalPlaceCount, setTotalPlaceCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
-  const fetchTotalPlacesCount = useCallback(async () => {
-    try {
-      let countQuery = query(collection(db, 'places'));
-      const snapshot = await getCountFromServer(countQuery);
-      setTotalPlaceCount(snapshot.data().count);
-    } catch (e) {
-      console.error('Error getting documents: ', e);
-    }
-  }, []);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPlaces = useCallback(
     async (page: number) => {
@@ -38,29 +30,33 @@ export const useFetchPlaces = (contentsPerPage: number) => {
       setIsLoading(true);
 
       try {
-        let q = query(
+        let placesQuery = query(
           collection(db, 'places'),
           orderBy('score', 'desc'),
           limit(contentsPerPage)
         );
 
         if (lastDoc && page > 1) {
-          q = query(
-            collection(db, 'places'),
-            orderBy('score', 'desc'),
+          placesQuery = query(
+            placesQuery,
             startAfter(lastDoc),
             limit(contentsPerPage)
           );
         }
 
-        const querySnapshot = await getDocs(q);
-        const placeData: PlaceDetailProps[] = [];
+        const querySnapshot = await getDocs(placesQuery);
+        let fetchedPlaces = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        })) as PlaceDetailProps[];
 
-        querySnapshot.forEach((doc) => {
-          placeData.push({ id: doc.id, ...doc.data() } as PlaceDetailProps);
-        });
+        if (searchQuery) {
+          fetchedPlaces = fetchedPlaces.filter((place) =>
+            place.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
 
-        setPlaces(placeData);
+        setPlaces(fetchedPlaces);
 
         if (querySnapshot.docs.length < contentsPerPage) {
           setLastDoc(null);
@@ -69,26 +65,26 @@ export const useFetchPlaces = (contentsPerPage: number) => {
         }
       } catch (e) {
         console.error('Error getting documents: ', e);
+        setError('장소 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
       } finally {
         setIsLoading(false);
       }
     },
-    [lastDoc, contentsPerPage, isLoading]
+    [lastDoc, contentsPerPage, isLoading, searchQuery]
   );
 
   useEffect(() => {
-    fetchTotalPlacesCount();
-  }, [fetchTotalPlacesCount]);
-
-  useEffect(() => {
-    fetchPlaces(currentPage);
-  }, [currentPage]);
+    setLastDoc(null);
+    setPlaces([]);
+    fetchPlaces(1);
+  }, [searchQuery]);
 
   const paginate = (pageNumber: number) => {
     if (pageNumber !== currentPage) {
       setCurrentPage(pageNumber);
+      fetchPlaces(pageNumber);
     }
   };
 
-  return { places, totalPlaceCount, currentPage, paginate };
+  return { places, currentPage, paginate, error };
 };
