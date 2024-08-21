@@ -10,6 +10,7 @@ import db from '@/app/db';
 import { Review } from '@/types/review';
 import { AuthContext } from '@/app/AuthContext';
 import { useFetchReviews } from '@/hooks/useFetchReviews';
+import { useGetContentCount } from '@/hooks/useGetContentCount';
 import PaginationBar from './Pagination';
 
 const addReview = async (review: Omit<Review, 'id'>) => {
@@ -69,8 +70,11 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
   const { user } = useContext(AuthContext);
   const contentsPerPage = 5;
-  const { reviews, currentPage, paginate, totalReviewsCount, error } =
-    useFetchReviews(placeId, contentsPerPage);
+  const { reviews, currentPage, paginate, error } = useFetchReviews(
+    placeId,
+    contentsPerPage
+  );
+  const { totalContentCount } = useGetContentCount('reviews', null, placeId);
 
   const handleAddReview = async () => {
     if (newReview.trim() === '') return;
@@ -115,7 +119,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
         size="sm"
         isCompact={true}
         currentPage={currentPage}
-        totalContents={totalReviewsCount}
+        totalContents={totalContentCount}
         contentsPerPage={contentsPerPage}
         paginate={paginate}
       />

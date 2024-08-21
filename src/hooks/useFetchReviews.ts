@@ -10,7 +10,6 @@ import {
   startAfter,
   limit,
   QueryDocumentSnapshot,
-  getCountFromServer,
 } from 'firebase/firestore';
 import db from '@/app/db';
 import { Review } from '@/types/review';
@@ -19,22 +18,8 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalReviewsCount, setTotalReviewsCount] = useState<number>(0);
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchTotalReviewsCount = useCallback(async () => {
-    try {
-      const countQuery = query(
-        collection(db, 'reviews'),
-        where('place_id', '==', placeId)
-      );
-      const snapshot = await getCountFromServer(countQuery);
-      setTotalReviewsCount(snapshot.data().count);
-    } catch (error) {
-      setError('댓글 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
-    }
-  }, [placeId]);
 
   const fetchReviews = useCallback(
     async (page: number) => {
@@ -83,10 +68,6 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
   );
 
   useEffect(() => {
-    fetchTotalReviewsCount();
-  }, [fetchTotalReviewsCount]);
-
-  useEffect(() => {
     fetchReviews(currentPage);
   }, [currentPage]);
 
@@ -96,5 +77,5 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
     }
   };
 
-  return { reviews, totalReviewsCount, currentPage, paginate, error };
+  return { reviews, currentPage, paginate, error };
 };

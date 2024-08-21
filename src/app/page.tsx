@@ -5,11 +5,12 @@ import SearchBar from '@/components/SearchBar';
 import HomePlaceCard from '@/components/HomePlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchPlaces } from '@/hooks/useFetchPlaces';
+import { useGetContentCount } from '@/hooks/useGetContentCount';
 
 export default function Home() {
   const contentsPerPage = 5;
-  const { places, currentPage, totalPlaceCount, paginate } =
-    useFetchPlaces(contentsPerPage);
+  const { places, currentPage, paginate } = useFetchPlaces(contentsPerPage);
+  const { totalContentCount } = useGetContentCount('places');
 
   return (
     <div>
@@ -38,7 +39,7 @@ export default function Home() {
           size="lg"
           isCompact={false}
           currentPage={currentPage}
-          totalContents={totalPlaceCount}
+          totalContents={totalContentCount}
           contentsPerPage={contentsPerPage}
           paginate={paginate}
         />
