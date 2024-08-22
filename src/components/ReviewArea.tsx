@@ -3,21 +3,14 @@
 import { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import {
-  collection,
-  setDoc,
-  query,
-  where,
-  doc,
-  onSnapshot,
-  orderBy,
-  getDoc,
-} from 'firebase/firestore';
+import { collection, setDoc, doc, getDoc } from 'firebase/firestore';
 import { Button } from '@nextui-org/react';
 
 import db from '@/app/db';
 import { Review } from '@/types/review';
 import { AuthContext } from '@/app/AuthContext';
+import { useFetchReviews } from '@/hooks/useFetchReviews';
+import { useGetContentCount } from '@/hooks/useGetContentCount';
 import PaginationBar from './Pagination';
 
 const addReview = async (review: Omit<Review, 'id'>) => {
@@ -75,28 +68,13 @@ const ReviewCard = (props: { review: Review }) => {
 
 const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
   const contentsPerPage = 5;
-
-  useEffect(() => {
-    const reviewsQuery = query(
-      collection(db, 'reviews'),
-      where('place_id', '==', placeId),
-      orderBy('date', 'asc')
-    );
-
-    const unsubscribe = onSnapshot(reviewsQuery, async (querySnapshot) => {
-      const reviewData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as Review[];
-      setReviews(reviewData);
-    });
-
-    return () => unsubscribe();
-  }, [placeId]);
+  const { reviews, currentPage, paginate, error } = useFetchReviews(
+    placeId,
+    contentsPerPage
+  );
+  const { totalContentCount } = useGetContentCount('reviews', null, placeId);
 
   const handleAddReview = async () => {
     if (newReview.trim() === '') return;
@@ -112,21 +90,23 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
     setNewReview('');
   };
 
-  const indexOfLastContent = currentPage * contentsPerPage;
-  const indexOfFirstContent = indexOfLastContent - contentsPerPage;
-  const currentContents = reviews.slice(
-    indexOfFirstContent,
-    indexOfLastContent
-  );
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  if (error) {
+    return (
+      <div className="text-red-500 font-bold p-3 rounded-md w-3/5 mx-auto">
+        <h2 className="text-xl font-extrabold mb-3 ml-2 text-slate-600">
+          댓글
+        </h2>
+        {error}
+      </div>
+    );
+  }
 
   return (
     <section className="w-3/5 mx-auto mb-10">
       <h2 className="text-xl font-extrabold mb-3 ml-2 text-slate-600">댓글</h2>
       <div>
         {reviews.length > 0 ? (
-          currentContents.map((review, index) => {
+          reviews.map((review, index) => {
             return <ReviewCard key={index} review={review} />;
           })
         ) : (
@@ -139,7 +119,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
         size="sm"
         isCompact={true}
         currentPage={currentPage}
-        totalContents={reviews.length}
+        totalContents={totalContentCount}
         contentsPerPage={contentsPerPage}
         paginate={paginate}
       />
