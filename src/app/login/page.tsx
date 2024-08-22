@@ -29,7 +29,7 @@ const Page = () => {
     <>
       <Header />
       <h1 className="w-2/4 mx-auto text-center font-bold text-2xl mb-5 mt-32">
-        Login
+        로그인
       </h1>
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
         <form className="mt-1" onSubmit={handleSubmit}>
@@ -59,14 +59,14 @@ const Page = () => {
               className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
               type="button"
             >
-              Sign Up
+              회원가입
             </button>
           </Link>
           <button
             className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold mb-2"
             type="submit"
           >
-            Login
+            로그인
           </button>
         </form>
       </div>
