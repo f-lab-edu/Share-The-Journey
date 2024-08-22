@@ -4,14 +4,14 @@ import { useSearchParams } from 'next/navigation';
 
 import SearchResultCard from './SearchResultCard';
 import PaginationBar from './Pagination';
-import { useFetchPlaces } from '@/hooks/useFetchPlaces';
+import { useFetchSearchPlaces } from '@/hooks/useFetchSearchPlaces';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
 
 const SearchResult = () => {
   const contentsPerPage = 5;
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
-  const { places, error, currentPage, paginate } = useFetchPlaces(
+  const { places, error, currentPage, paginate } = useFetchSearchPlaces(
     contentsPerPage,
     query
   );
@@ -30,11 +30,8 @@ const SearchResult = () => {
         )}
         {!error && places.length > 0 && (
           <>
-            {places.map((place) => (
-              <div key={place.id}>
-                <SearchResultCard {...place} />
-                <hr className="w-10/12 mx-auto" />
-              </div>
+            {places.map((place, index) => (
+              <SearchResultCard {...place} key={place.id} />
             ))}
             <div className="mt-14">
               <PaginationBar
