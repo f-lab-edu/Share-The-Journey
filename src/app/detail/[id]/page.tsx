@@ -56,7 +56,11 @@ const PlaceInfo = async ({
 }: PlaceDetailProps) => {
   const priceText =
     price > 0
-      ? `${currency(price, { separator: ',', precision: 1 }).format()}`
+      ? `${currency(price, {
+          symbol: '₩',
+          separator: ',',
+          precision: 0,
+        }).format()}`
       : '무료';
 
   const amenitiesText =

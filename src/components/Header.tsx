@@ -83,12 +83,12 @@ const Header = () => {
 
       {user && (
         <Button onClick={handleLogout} color="danger">
-          Logout
+          로그아웃
         </Button>
       )}
       {!user && (
         <Button as={Link} color="success" href="/login" size="md">
-          Login
+          로그인
         </Button>
       )}
     </Navbar>

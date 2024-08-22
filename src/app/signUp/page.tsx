@@ -15,9 +15,9 @@ const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [error, setError] = useState<'emailInUse' | 'invalidEmail' | 'weakPassword' | null>(
-    null
-  );
+  const [error, setError] = useState<
+    'emailInUse' | 'invalidEmail' | 'weakPassword' | null
+  >(null);
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -56,17 +56,17 @@ const Page = () => {
       case 'emailInUse':
         return '이미 사용중인 이메일입니다.';
       case 'invalidEmail':
-        return '이메일 형식이 올바르지 않습니다.'
+        return '이메일 형식이 올바르지 않습니다.';
       case 'weakPassword':
-        return '비밀번호는 6자 이상이어야 합니다.'
+        return '비밀번호는 6자 이상이어야 합니다.';
     }
-  }
+  };
 
   return (
     <>
       <Header />
       <h1 className="w-2/4 mx-auto text-center font-bold text-2xl mb-5 mt-32">
-        Sign Up
+        회원가입
       </h1>
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
         <form className="mt-1 flex flex-col gap-2" onSubmit={handleSubmit}>
@@ -113,7 +113,7 @@ const Page = () => {
             className="w-full text-white font-semibold"
             type="submit"
           >
-            Sign Up
+            회원가입
           </Button>
         </form>
       </div>
