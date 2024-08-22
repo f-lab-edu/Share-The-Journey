@@ -15,7 +15,11 @@ const HomePlaceCard = ({
 }: PlaceCardProps) => {
   const priceText =
     price > 0
-      ? `${currency(price, { separator: ',', precision: 1 }).format()}`
+      ? `${currency(price, {
+          symbol: '₩',
+          separator: ',',
+          precision: 0,
+        }).format()}`
       : '무료';
 
   const imgUrlStr = imgUrls[0] ? imgUrls[0] : '/default.png';
