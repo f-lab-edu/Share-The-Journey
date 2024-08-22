@@ -1,6 +1,6 @@
 'use client';
 
-import { Input, Checkbox, CheckboxGroup } from '@nextui-org/react';
+import { Input, Checkbox, CheckboxGroup, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent, useContext } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
@@ -16,6 +16,7 @@ const Page = () => {
   const { user } = useContext(AuthContext);
   const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({});
   const [files, setFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
   if (!user) {
@@ -66,6 +67,12 @@ const Page = () => {
       return;
     }
 
+    if (isUploading) {
+      return;
+    }
+
+    setIsUploading(true);
+
     try {
       let imgUrls: string[] = [];
 
@@ -91,6 +98,8 @@ const Page = () => {
       router.push('/');
     } catch (e) {
       console.error('Error adding document: ', e);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -225,9 +234,13 @@ const Page = () => {
               onChange={handleFileChange}
             />
           </label>
-          <button className="w-full bg-green-600 text-white font-semibold p-2 rounded-lg my-3">
+          <Button
+            type="submit"
+            isDisabled={isUploading ? true : false}
+            className="w-full bg-green-600 text-white text-md font-semibold p-2 rounded-lg my-3"
+          >
             여행지 등록하기
-          </button>
+          </Button>
         </form>
       </div>
     </>
