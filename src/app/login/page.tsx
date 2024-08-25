@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { Input, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -32,42 +32,51 @@ const Page = () => {
         로그인
       </h1>
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
-        <form className="mt-1" onSubmit={handleSubmit}>
-          <label className="block">
-            <h3 className="font-semibold">이메일</h3>
-            <input
-              className="my-2 rounded-md w-full p-1 px-2"
+        <form className="flex flex-wrap" onSubmit={handleSubmit}>
+          <div className="mb-3 font-semibold w-full">
+            <Input
+              className="bg-white rounded-xl"
+              variant="bordered"
               type="email"
               name="email"
+              label="이메일"
+              labelPlacement="outside"
+              placeholder="example@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </label>
-          <label className="block">
-            <h3 className="font-semibold">비밀번호</h3>
-            <input
-              className="rounded-md w-full my-2 p-1 px-2"
+          </div>
+          <div className="mb-5 font-semibold w-full">
+            <Input
+              variant="bordered"
+              label="비밀번호"
+              labelPlacement="outside"
+              placeholder="비밀번호를 입력해주세요."
+              className="bg-white rounded-xl"
               type="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </label>
-          <p className="text-sm text-center my-2">아직 회원이 아니신가요?</p>
-          <Link href="/signUp">
-            <button
-              className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
-              type="button"
-            >
-              회원가입
-            </button>
-          </Link>
-          <button
-            className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold mb-2"
+          </div>
+          <Button
+            className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold mb-3"
             type="submit"
           >
             로그인
-          </button>
+          </Button>
+          <Button
+            className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
+            type="button"
+            onClick={() => {
+              router.push('/signUp');
+            }}
+          >
+            회원가입
+          </Button>
+          <p className="text-sm text-center my-1 mx-auto">
+            아직 회원이 아니시라면 회원가입을 눌러주세요.
+          </p>
         </form>
       </div>
     </>

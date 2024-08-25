@@ -72,6 +72,8 @@ const Page = () => {
         <form className="mt-1 flex flex-col gap-2" onSubmit={handleSubmit}>
           <div className="mb-3 font-semibold">
             <Input
+              variant="bordered"
+              className="bg-white rounded-xl"
               type="text"
               label="이메일"
               value={email}
@@ -85,6 +87,8 @@ const Page = () => {
           </div>
           <div className="mb-3 font-semibold">
             <Input
+              variant="bordered"
+              className="bg-white rounded-xl"
               type="password"
               label="비밀번호"
               value={password}
@@ -98,6 +102,8 @@ const Page = () => {
           </div>
           <div className="mb-3 font-semibold">
             <Input
+              variant="bordered"
+              className="bg-white rounded-xl"
               type="text"
               label="닉네임"
               value={nickname}
