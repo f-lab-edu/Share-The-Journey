@@ -27,8 +27,8 @@ const ReviewCard = (props: { review: Review }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (review.writer === '비회원') {
-      setUsername('비회원');
+    if (review.writer === 'unknown') {
+      setUsername('unknown');
       return;
     }
 
@@ -81,7 +81,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
 
     const review = {
       description: newReview,
-      writer: user?.uid ?? '비회원',
+      writer: user?.uid ?? 'unknown',
       date: Date.now(),
       place_id: placeId,
     };
