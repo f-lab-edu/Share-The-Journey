@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, Spinner } from '@nextui-org/react';
 
 import auth from '@/app/auth';
 import db from '@/app/db';
@@ -15,6 +15,7 @@ const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<
     'emailInUse' | 'invalidEmail' | 'weakPassword' | null
   >(null);
@@ -26,6 +27,11 @@ const Page = () => {
       setError('invalidEmail');
       return;
     }
+
+    if (isLoading) return;
+
+    setIsLoading(true);
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         const user = res.user;
@@ -48,6 +54,9 @@ const Page = () => {
         } else {
           // 에러 fallback 옵션 추가할 것
         }
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -118,8 +127,9 @@ const Page = () => {
             radius="lg"
             className="w-full text-white font-semibold"
             type="submit"
+            isDisabled={isLoading}
           >
-            회원가입
+            {isLoading ? <Spinner size="sm" color="default" /> : '회원가입'}
           </Button>
         </form>
       </div>
