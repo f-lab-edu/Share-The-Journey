@@ -11,10 +11,8 @@ const SearchResult = () => {
   const contentsPerPage = 5;
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
-  const { places, error, currentPage, paginate } = useFetchSearchPlaces(
-    contentsPerPage,
-    query
-  );
+  const { places, error, currentPage, moveToNextPage, moveToPrevPage } =
+    useFetchSearchPlaces(contentsPerPage, query);
   const { totalContentCount } = useGetContentCount('places', query);
 
   return (
@@ -35,12 +33,11 @@ const SearchResult = () => {
             ))}
             <div className="mt-14">
               <PaginationBar
-                size="lg"
-                isCompact={false}
                 currentPage={currentPage}
                 totalContents={totalContentCount}
                 contentsPerPage={contentsPerPage}
-                paginate={paginate}
+                moveToNextPage={moveToNextPage}
+                moveToPrevPage={moveToPrevPage}
               />
             </div>
           </>
