@@ -71,11 +71,19 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const contentsPerPage = 5;
-  const { reviews, currentPage, paginate, error } = useFetchReviews(
-    placeId,
-    contentsPerPage
+  const {
+    reviews,
+    currentPage,
+    error,
+    moveToNextPage,
+    moveToPrevPage,
+    fetchReviews,
+  } = useFetchReviews(placeId, contentsPerPage);
+  const { totalContentCount, getCount } = useGetContentCount(
+    'reviews',
+    null,
+    placeId
   );
-  const { totalContentCount } = useGetContentCount('reviews', null, placeId);
 
   const handleAddReview = async () => {
     if (newReview.trim() === '' || isLoading) return;
@@ -92,6 +100,8 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
     try {
       await addReview(review);
       setNewReview('');
+      fetchReviews(currentPage);
+      getCount();
     } catch (error) {
       console.error(error);
     } finally {
@@ -125,12 +135,11 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
         )}
       </div>
       <PaginationBar
-        size="sm"
-        isCompact={true}
         currentPage={currentPage}
         totalContents={totalContentCount}
         contentsPerPage={contentsPerPage}
-        paginate={paginate}
+        moveToNextPage={moveToNextPage}
+        moveToPrevPage={moveToPrevPage}
       />
       <input
         type="text"

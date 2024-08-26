@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   collection,
   query,
@@ -18,7 +18,7 @@ export const useGetContentCount = (
   const [totalContentCount, setTotalContentCount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
 
-  const getCount = useCallback(async () => {
+  const getCount = async () => {
     try {
       let countQuery = query(collection(db, category));
 
@@ -38,11 +38,11 @@ export const useGetContentCount = (
     } catch (e) {
       setError('총 컨텐츠 수를 가져오는 중 오류가 발생했습니다.');
     }
-  }, [category, searchQuery, placeId]);
+  };
 
   useEffect(() => {
     getCount();
-  }, [getCount]);
+  }, []);
 
-  return { totalContentCount, error };
+  return { totalContentCount, error, getCount };
 };

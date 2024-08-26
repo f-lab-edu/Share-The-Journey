@@ -9,7 +9,8 @@ import { useGetContentCount } from '@/hooks/useGetContentCount';
 
 export default function Home() {
   const contentsPerPage = 5;
-  const { places, currentPage, paginate } = useFetchPlaces(contentsPerPage);
+  const { places, currentPage, moveToNextPage, moveToPrevPage } =
+    useFetchPlaces(contentsPerPage);
   const { totalContentCount } = useGetContentCount('places');
 
   return (
@@ -36,12 +37,11 @@ export default function Home() {
           />
         ))}
         <PaginationBar
-          size="lg"
-          isCompact={false}
           currentPage={currentPage}
           totalContents={totalContentCount}
           contentsPerPage={contentsPerPage}
-          paginate={paginate}
+          moveToNextPage={moveToNextPage}
+          moveToPrevPage={moveToPrevPage}
         />
       </section>
     </div>

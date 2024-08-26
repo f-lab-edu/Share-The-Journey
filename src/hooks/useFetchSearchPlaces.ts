@@ -45,7 +45,10 @@ export const useFetchSearchPlaces = (
     fetchSearchPlaces(currentPage, searchQuery);
   }, [currentPage, searchQuery]);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const moveToNextPage = (totalPage: number) =>
+    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
+  const moveToPrevPage = () =>
+    setCurrentPage((page) => (page > 1 ? page - 1 : page));
 
-  return { places, error, currentPage, paginate };
+  return { places, error, currentPage, moveToNextPage, moveToPrevPage };
 };

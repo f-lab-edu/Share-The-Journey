@@ -1,21 +1,20 @@
-import { Pagination } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
+import { NextArrow, PrevArrow } from '@/icons/arrow';
 
 type PaginationProps = {
-  size: 'sm' | 'lg';
-  isCompact: boolean;
   currentPage: number;
   totalContents: number;
   contentsPerPage: number;
-  paginate: (pageNumber: number) => void;
+  moveToNextPage: (totalPage: number) => void;
+  moveToPrevPage: () => void;
 };
 
 const PaginationBar = ({
-  size,
-  isCompact,
   currentPage,
   totalContents,
-  paginate,
   contentsPerPage,
+  moveToNextPage,
+  moveToPrevPage,
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalContents / contentsPerPage);
 
@@ -24,16 +23,26 @@ const PaginationBar = ({
   }
 
   return (
-    <div className="flex justify-center mb-5">
-      <Pagination
-        isCompact={isCompact}
-        showControls
-        total={totalPages}
-        initialPage={1}
-        page={currentPage}
-        onChange={(page) => paginate(page)}
-        size={size}
-      />
+    <div className="flex justify-between mb-10 w-9/12 mx-auto items-center">
+      <Button
+        isDisabled={currentPage === 1}
+        size="md"
+        variant="light"
+        color="default"
+        onPress={moveToPrevPage}
+      >
+        <PrevArrow />
+      </Button>
+      <p className="text-sm font-semibold">페이지 {currentPage}</p>
+      <Button
+        isDisabled={currentPage === totalPages}
+        size="md"
+        variant="light"
+        color="default"
+        onPress={() => moveToNextPage(totalPages)}
+      >
+        <NextArrow />
+      </Button>
     </div>
   );
 };
