@@ -10,6 +10,7 @@ import {
   startAfter,
   limit,
   QueryDocumentSnapshot,
+  DocumentData,
 } from 'firebase/firestore';
 import db from '@/app/db';
 import { Review } from '@/types/review';
@@ -18,7 +19,9 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
+  const [lastDocs, setLastDocs] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchReviews = async (page: number) => {
@@ -34,12 +37,10 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
         limit(contentPerPage)
       );
 
-      if (lastDoc && page > 1) {
+      if (page > 1 && lastDocs[page - 2]) {
         reviewsQuery = query(
-          collection(db, 'reviews'),
-          where('place_id', '==', placeId),
-          orderBy('date', 'asc'),
-          startAfter(lastDoc),
+          reviewsQuery,
+          startAfter(lastDocs[page - 2]),
           limit(contentPerPage)
         );
       }
@@ -52,11 +53,10 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
 
       setReviews(reviewData);
 
-      if (querySnapshot.docs.length < contentPerPage) {
-        setLastDoc(null);
-      } else {
-        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      }
+      const newLastDocs = [...lastDocs];
+      newLastDocs[page - 1] = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+      setLastDocs(newLastDocs);
     } catch (error) {
       setError('리뷰 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
     } finally {
