@@ -1,6 +1,6 @@
 'use client';
 
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -12,16 +12,25 @@ import auth from '@/app/auth';
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isLoading) return;
+
+    setIsLoading(true);
+
     signInWithEmailAndPassword(auth, email, password)
       .then((_res) => {
         router.push('/');
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -62,12 +71,14 @@ const Page = () => {
           <Button
             className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold mb-3"
             type="submit"
+            isDisabled={isLoading}
           >
-            로그인
+            {isLoading ? <Spinner size="sm" color="default" /> : '로그인'}
           </Button>
           <Button
             className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
             type="button"
+            isDisabled={isLoading}
             onClick={() => {
               router.push('/signUp');
             }}
