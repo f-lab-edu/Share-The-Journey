@@ -66,7 +66,16 @@ export const useFetchPlaces = (contentsPerPage: number) => {
     fetchPlaces(currentPage);
   }, [currentPage]);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const moveToNextPage = (totalPage: number) =>
+    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
+  const moveToPrevPage = () =>
+    setCurrentPage((page) => (page > 1 ? page - 1 : page));
 
-  return { places, currentPage, paginate, error };
+  return {
+    places,
+    currentPage,
+    error,
+    moveToNextPage,
+    moveToPrevPage,
+  };
 };

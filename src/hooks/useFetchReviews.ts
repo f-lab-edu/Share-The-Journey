@@ -68,7 +68,17 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
     fetchReviews(currentPage);
   }, [currentPage]);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const moveToNextPage = (totalPage: number) =>
+    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
+  const moveToPrevPage = () =>
+    setCurrentPage((page) => (page > 1 ? page - 1 : page));
 
-  return { reviews, currentPage, paginate, error };
+  return {
+    reviews,
+    currentPage,
+    error,
+    moveToNextPage,
+    moveToPrevPage,
+    fetchReviews,
+  };
 };
