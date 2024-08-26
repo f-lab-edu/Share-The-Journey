@@ -14,7 +14,7 @@ const ImgCarousel = ({ imgUrls }: { imgUrls: string[] }) => {
 
   const swiperParams = {
     effect: 'coverflow',
-    spaceBetween: 30,
+    spaceBetween: 40,
     slidesPerView: 1.5,
     initialSlide: currentImgIdx,
     navigation: true,
@@ -23,11 +23,11 @@ const ImgCarousel = ({ imgUrls }: { imgUrls: string[] }) => {
     modules: [Navigation, Pagination, EffectCoverflow],
     onSlideChange: (swiper: SwiperType) => setCurrentImgIdx(swiper.activeIndex),
     coverflowEffect: {
-      rotate: 50,
-      stretch: 10,
-      depth: 200,
+      rotate: 30,
+      stretch: 0,
+      depth: 100,
       modifier: 1,
-      slideShadows: true,
+      slideShadows: false,
     },
     className: 'my-12 w-3/5 flex justify-center mx-auto',
   };
@@ -37,13 +37,13 @@ const ImgCarousel = ({ imgUrls }: { imgUrls: string[] }) => {
       {imgUrls && imgUrls.length > 0 ? (
         imgUrls.map((url, idx) => (
           <SwiperSlide key={idx}>
-            <div className="w-full h-[350px] max-w-[600px] mx-auto">
+            <div className="relative w-full h-[350px] max-w-[550px] mx-auto">
               <Image
                 src={url}
                 alt={`Slide image ${idx + 1}`}
                 fill
                 sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="rounded-lg"
+                className="rounded-lg object-cover"
                 priority={idx === 0}
               />
             </div>
