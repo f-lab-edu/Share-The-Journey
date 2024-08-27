@@ -8,7 +8,7 @@ import { Input, Button, Spinner } from '@nextui-org/react';
 
 import auth from '@/app/auth';
 import db from '@/app/db';
-import Header from '@/components/Header';
+import UnknownError from '@/components/UnknownError';
 import { validateEmail } from '@/utils/validate';
 
 const Page = () => {
@@ -17,8 +17,8 @@ const Page = () => {
   const [nickname, setNickname] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<
-    'emailInUse' | 'invalidEmail' | 'weakPassword' | null
-  >(null);
+    'emailInUse' | 'invalidEmail' | 'weakPassword' | 'unknown' | null
+  >('unknown');
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -52,7 +52,7 @@ const Page = () => {
         } else if (err.message.includes(AuthErrorCodes.WEAK_PASSWORD)) {
           setError('weakPassword');
         } else {
-          // 에러 fallback 옵션 추가할 것
+          setError('unknown');
         }
       })
       .finally(() => {
@@ -71,9 +71,12 @@ const Page = () => {
     }
   };
 
+  if (error === 'unknown') {
+    return <UnknownError onClick={() => setError(null)} useAt={'signUp'} />;
+  }
+
   return (
     <>
-      <Header />
       <h1 className="w-2/4 mx-auto text-center font-bold text-2xl mb-5 mt-32">
         회원가입
       </h1>
