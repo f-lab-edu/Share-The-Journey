@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import auth from '@/app/auth';
+import UnknownError from '@/components/UnknownError';
 import { validateEmail, validatePassword } from '@/utils/validate';
 
 const Page = () => {
@@ -13,8 +14,8 @@ const Page = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<
-    'invalid' | 'unknown' | 'password' | 'email' | ''
-  >('');
+    'invalid' | 'unknown' | 'password' | 'email' | null
+  >(null);
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -59,25 +60,7 @@ const Page = () => {
   };
 
   if (error === 'unknown') {
-    return (
-      <div className="w-2/5 mx-auto flex flex-col bg-yellow-100 p-4 mt-32 rounded-lg">
-        <h1 className="mx-auto font-bold text-red-600 text-xl">오류</h1>
-        <p className="mx-auto my-5 text-center">
-          알 수 없는 오류가 발생했습니다.
-          <br /> 다시 시도해 주세요.
-        </p>
-        <Button
-          type="button"
-          color="danger"
-          onClick={() => {
-            setError('');
-          }}
-          className="font-semibold w-3/5 mx-auto"
-        >
-          로그인 페이지로 이동하기
-        </Button>
-      </div>
-    );
+    return <UnknownError onClick={() => setError(null)} useAt={'login'} />;
   }
 
   return (
