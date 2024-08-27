@@ -18,7 +18,7 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<
     'emailInUse' | 'invalidEmail' | 'weakPassword' | 'unknown' | null
-  >('unknown');
+  >(null);
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
