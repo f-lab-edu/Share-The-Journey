@@ -49,6 +49,15 @@ const Page = () => {
       });
   };
 
+  const getErrorMessage = () => {
+    switch (error) {
+      case 'email':
+        return '이메일 형식이 올바르지 않습니다.';
+      case 'password':
+        return '비밀번호는 6자 이상이어야 합니다.';
+    }
+  };
+
   if (error === 'unknown') {
     return (
       <div className="w-2/5 mx-auto flex flex-col bg-yellow-100 p-4 mt-32 rounded-lg">
@@ -87,9 +96,7 @@ const Page = () => {
             <Input
               className="bg-white rounded-xl"
               isInvalid={error === 'email' || error === 'invalid'}
-              errorMessage={
-                error === 'email' ? '이메일 형식이 올바르지 않습니다.' : ''
-              }
+              errorMessage={getErrorMessage()}
               variant="bordered"
               type="text"
               name="email"
@@ -104,9 +111,7 @@ const Page = () => {
             <Input
               variant="bordered"
               isInvalid={error === 'password' || error === 'invalid'}
-              errorMessage={
-                error === 'password' ? '비밀번호는 6자 이상이어야 합니다.' : ''
-              }
+              errorMessage={getErrorMessage()}
               label="비밀번호"
               labelPlacement="outside"
               placeholder="비밀번호를 입력해주세요."
