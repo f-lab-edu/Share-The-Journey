@@ -2,6 +2,7 @@
 
 import { useState, useContext, useEffect } from 'react';
 import { Button, Spinner } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 
 import MyPlaceCard from '@/components/MyPlaceCard';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
@@ -11,6 +12,7 @@ const Page = () => {
   const { user } = useContext(AuthContext);
   const [uid, setUid] = useState<string | null>(null);
   const contentPerPage = 9;
+  const router = useRouter();
 
   useEffect(() => {
     if (user?.uid) {
@@ -27,6 +29,23 @@ const Page = () => {
         <Spinner color="default" />
       </div>
     );
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-red-600 text-xl font-bold">{error}</h1>
+        <Button
+          className="mt-3"
+          color="danger"
+          onClick={() => {
+            router.push('/');
+          }}
+        >
+          홈으로
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-8/12 mx-auto pl-3">
