@@ -73,7 +73,7 @@ const Header = () => {
               key="my-travel"
               description="내가 공유한 여행지를 확인해보세요."
               className="text-success"
-              href="/"
+              href={user ? '/myJourney' : '/login'}
             >
               내가 등록한 여행지
             </DropdownItem>
