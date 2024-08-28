@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useContext, useEffect } from 'react';
-import { Button } from '@nextui-org/react';
+import { Button, Spinner } from '@nextui-org/react';
 
 import MyPlaceCard from '@/components/MyPlaceCard';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
@@ -21,12 +21,17 @@ const Page = () => {
   const { places, error, currentPage, moveToNextPage, moveToPrevPage } =
     useFetchMyPlaces(contentPerPage, uid || '');
 
-  if (!user) return <div>로딩중...</div>;
+  if (!user)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner color="default" />
+      </div>
+    );
 
   return (
     <div className="w-8/12 mx-auto pl-3">
       <h1 className="text-xl font-semibold mt-10 text-start mb-5">
-        내가 등록한 여행지 {places.length}개
+        내가 경험한 {places.length}개의 여정
       </h1>
       <div className="grid grid-cols-3 gap-10">
         {places.map((place) => (
