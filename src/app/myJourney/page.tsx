@@ -5,7 +5,9 @@ import { Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
 import MyPlaceCard from '@/components/MyPlaceCard';
+import PaginationBar from '@/components/Pagination';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
+import { useGetMyPlacesCount } from '@/hooks/useGetMyPlacesCount';
 import { AuthContext } from '@/app/AuthContext';
 
 const Page = () => {
@@ -22,6 +24,7 @@ const Page = () => {
 
   const { places, error, currentPage, moveToNextPage, moveToPrevPage } =
     useFetchMyPlaces(contentPerPage, uid || '');
+  const { totalContentCount } = useGetMyPlacesCount(uid);
 
   if (!user)
     return (
@@ -52,13 +55,20 @@ const Page = () => {
       <h1 className="text-xl font-semibold mt-10 text-start mb-5">
         내가 경험한 {places.length}개의 여정
       </h1>
-      <div className="grid grid-cols-3 gap-10">
+      <div className="grid grid-cols-3 gap-10 mb-10">
         {places.map((place) => (
           <div key={place.id}>
             <MyPlaceCard {...place} />
           </div>
         ))}
       </div>
+      <PaginationBar
+        currentPage={currentPage}
+        totalContents={totalContentCount}
+        contentsPerPage={contentPerPage}
+        moveToNextPage={moveToNextPage}
+        moveToPrevPage={moveToPrevPage}
+      />
     </div>
   );
 };
