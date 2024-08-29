@@ -68,5 +68,12 @@ export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
   const moveToPrevPage = () =>
     setCurrentPage((page) => (page > 1 ? page - 1 : page));
 
-  return { places, error, currentPage, moveToNextPage, moveToPrevPage };
+  return {
+    places,
+    error,
+    currentPage,
+    moveToNextPage,
+    moveToPrevPage,
+    fetchMyPlaces,
+  };
 };
