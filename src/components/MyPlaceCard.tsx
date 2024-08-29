@@ -6,6 +6,7 @@ import {
   CardBody,
   CardFooter,
   Button,
+  Spinner,
 } from '@nextui-org/react';
 
 import StarIcon from '@/icons/starIcon';
@@ -17,7 +18,10 @@ const MyPlaceCard = ({
   location,
   score,
   name,
-}: PlaceCardProps) => {
+  id,
+  onDelete,
+  isLoading,
+}: PlaceCardProps & { onDelete: (id: string) => void; isLoading: boolean }) => {
   const imgUrlStr = imgUrls[0] ? imgUrls[0] : '/default.png';
   const priceText =
     price > 0
@@ -52,11 +56,22 @@ const MyPlaceCard = ({
           />
         </CardBody>
         <CardFooter className="gap-2 flex justify-evenly pb-0">
-          <Button color="success" className="flex-grow">
-            수정
+          <Button
+            type="button"
+            isDisabled={isLoading}
+            color="success"
+            className="flex-grow"
+          >
+            {isLoading ? <Spinner color="white" /> : '수정'}
           </Button>
-          <Button color="danger" className="flex-grow">
-            삭제
+          <Button
+            type="button"
+            color="danger"
+            isDisabled={isLoading}
+            className="flex-grow"
+            onClick={() => onDelete(id)}
+          >
+            {isLoading ? <Spinner color="white" /> : '삭제'}
           </Button>
         </CardFooter>
       </Card>
