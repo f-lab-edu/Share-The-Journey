@@ -69,6 +69,26 @@ const Page = () => {
     );
   }
 
+  if (totalContentCount === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <p className="font-semibold text-lg mb-4">
+          아직 등록된 여정이 없어요. 여정을 등록해주세요.
+        </p>
+        <Button
+          type="button"
+          color="primary"
+          onClick={() => {
+            router.push('/upload');
+          }}
+          className="font-semibold"
+        >
+          등록하러 가기
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="w-8/12 mx-auto pl-3">
       <h1 className="text-xl font-semibold mt-10 text-start mb-5">
