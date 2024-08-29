@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import MyPlaceCard from '@/components/MyPlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
+import { useDeletePlace } from '@/hooks/useDeletePlace';
 import { useGetMyPlacesCount } from '@/hooks/useGetMyPlacesCount';
 import { AuthContext } from '@/app/AuthContext';
 
@@ -15,6 +16,16 @@ const Page = () => {
   const [uid, setUid] = useState<string | null>(null);
   const contentPerPage = 9;
   const router = useRouter();
+  const { deletePlace, isLoading, deleteError } = useDeletePlace();
+
+  const handleDeletePlace = async (id: string) => {
+    await deletePlace(id).then(() => {
+      if (!error) {
+        fetchMyPlaces(currentPage, uid || '');
+        getCount(uid);
+      }
+    });
+  };
 
   useEffect(() => {
     if (user?.uid) {
@@ -22,9 +33,15 @@ const Page = () => {
     }
   }, [user]);
 
-  const { places, error, currentPage, moveToNextPage, moveToPrevPage } =
-    useFetchMyPlaces(contentPerPage, uid || '');
-  const { totalContentCount } = useGetMyPlacesCount(uid);
+  const {
+    places,
+    error,
+    currentPage,
+    moveToNextPage,
+    moveToPrevPage,
+    fetchMyPlaces,
+  } = useFetchMyPlaces(contentPerPage, uid || '');
+  const { totalContentCount, getCount } = useGetMyPlacesCount(uid);
 
   if (!user)
     return (
@@ -33,10 +50,12 @@ const Page = () => {
       </div>
     );
 
-  if (error) {
+  if (error || deleteError) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-red-600 text-xl font-bold">{error}</h1>
+        <h1 className="text-red-600 text-xl font-bold">
+          {error ? error : deleteError}
+        </h1>
         <Button
           className="mt-3"
           color="danger"
@@ -58,7 +77,11 @@ const Page = () => {
       <div className="grid grid-cols-3 gap-10 mb-10">
         {places.map((place) => (
           <div key={place.id}>
-            <MyPlaceCard {...place} />
+            <MyPlaceCard
+              {...place}
+              onDelete={handleDeletePlace}
+              isLoading={isLoading}
+            />
           </div>
         ))}
       </div>
