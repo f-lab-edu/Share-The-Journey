@@ -19,8 +19,9 @@ import { PlaceDetailProps } from '@/types/place';
 export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastDoc, setLastDoc] =
-    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [pageDocs, setPageDocs] = useState<
+    Record<number, QueryDocumentSnapshot<DocumentData> | null>
+  >({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,17 +31,18 @@ export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
     setIsLoading(true);
 
     try {
-      const placeQuery = query(
+      let placeQuery = query(
         collection(db, 'places'),
         where('registrant', '==', userId),
         orderBy('score', 'desc'),
         limit(contentsPerPage)
       );
 
-      const finalQuery = lastDoc
-        ? query(placeQuery, startAfter(lastDoc))
-        : placeQuery;
-      const querySnapshot = await getDocs(finalQuery);
+      if (page > 1 && pageDocs[page - 1]) {
+        placeQuery = query(placeQuery, startAfter(pageDocs[page - 1]));
+      }
+
+      const querySnapshot = await getDocs(placeQuery);
       const newPlaces = querySnapshot.docs.map(
         (doc) =>
           ({
@@ -49,8 +51,15 @@ export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
           } as PlaceDetailProps)
       );
 
+      if (page > 1 && newPlaces.length === 0) {
+        setCurrentPage((page) => Math.max(page - 1, 1));
+      }
+
       setPlaces(newPlaces);
-      setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      setPageDocs((prev) => ({
+        ...prev,
+        [page]: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
+      }));
     } catch (error) {
       console.error(error);
       setError('장소를 불러오는 중 오류가 발생했습니다.');
