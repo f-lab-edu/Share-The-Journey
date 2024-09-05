@@ -92,7 +92,7 @@ const Page = () => {
   return (
     <div className="w-8/12 mx-auto pl-3">
       <h1 className="text-xl font-semibold mt-10 text-start mb-5">
-        내가 경험한 {places.length}개의 여정
+        내가 경험한 {totalContentCount}개의 여정
       </h1>
       <div className="grid grid-cols-3 gap-10 mb-10">
         {places.map((place) => (
