@@ -16,20 +16,15 @@ import { validateNewPlaceForm } from '@/utils/validate';
 type PlaceFormProps = {
   initialData?: Partial<NewPlaceForm>;
   mode: 'upload' | 'edit';
-  isSubmitting?: boolean;
   id?: string;
 };
 
-const PlaceForm = ({
-  initialData = {},
-  mode,
-  isSubmitting,
-  id,
-}: PlaceFormProps) => {
+const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
   const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({
     ...initialData,
     amenities: initialData.amenities ?? [],
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<'error' | null>(null);
   const { updatePlace } = useUpdatePlace();
 
@@ -39,14 +34,6 @@ const PlaceForm = ({
       ...prev,
       [name]: name === 'price' || name === 'score' ? parseFloat(value) : value,
     }));
-  };
-
-  const handleUpdate = async () => {
-    try {
-      await updatePlace(id as string, newPlace as NewPlaceForm);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +52,10 @@ const PlaceForm = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
     const newPlaceValidateInfo = validateNewPlaceForm(newPlace as NewPlaceForm);
 
     if (!newPlaceValidateInfo.success) {
@@ -74,13 +65,15 @@ const PlaceForm = ({
 
     try {
       if (mode === 'edit') {
-        await handleUpdate();
+        await updatePlace(id as string, newPlace as NewPlaceForm);
       } else {
         console.log('uploading...');
       }
     } catch (error) {
       console.error(error);
       setError('error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,11 +123,12 @@ const PlaceForm = ({
             labelPlacement="outside"
             variant="bordered"
             className="bg-white rounded-xl"
+            value={newPlace.price?.toString()}
             min={0}
             onChange={handleChange}
             endContent={
               <div className="pointer-events-none flex items-center">
-                <span className="text-default-400 text-small">$</span>
+                <span className="text-default-400 text-small">₩</span>
               </div>
             }
           />
@@ -149,6 +143,7 @@ const PlaceForm = ({
             variant="bordered"
             className="bg-white rounded-xl"
             type="number"
+            value={newPlace.score?.toString()}
             step={0.1}
             min={0}
             max={5}
