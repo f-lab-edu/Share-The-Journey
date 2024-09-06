@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import currency from 'currency.js';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardHeader,
@@ -22,6 +23,7 @@ const MyPlaceCard = ({
   onDelete,
   isLoading,
 }: PlaceCardProps & { onDelete: (id: string) => void; isLoading: boolean }) => {
+  const router = useRouter();
   const imgUrlStr = imgUrls[0] ? imgUrls[0] : '/default.png';
   const priceText =
     price > 0
@@ -61,6 +63,7 @@ const MyPlaceCard = ({
             isDisabled={isLoading}
             color="success"
             className="flex-grow"
+            onClick={() => router.push(`/edit/${id}`)}
           >
             {isLoading ? <Spinner color="white" /> : '수정'}
           </Button>
