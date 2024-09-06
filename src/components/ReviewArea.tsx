@@ -4,7 +4,7 @@ import { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { collection, setDoc, doc, getDoc } from 'firebase/firestore';
-import { Button } from '@nextui-org/react';
+import { Button, Spinner } from '@nextui-org/react';
 
 import db from '@/app/db';
 import { Review } from '@/types/review';
@@ -27,8 +27,8 @@ const ReviewCard = (props: { review: Review }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (review.writer === '비회원') {
-      setUsername('비회원');
+    if (review.writer === 'unknown') {
+      setUsername('unknown');
       return;
     }
 
@@ -68,26 +68,45 @@ const ReviewCard = (props: { review: Review }) => {
 
 const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const contentsPerPage = 5;
-  const { reviews, currentPage, paginate, error } = useFetchReviews(
-    placeId,
-    contentsPerPage
+  const {
+    reviews,
+    currentPage,
+    error,
+    moveToNextPage,
+    moveToPrevPage,
+    fetchReviews,
+  } = useFetchReviews(placeId, contentsPerPage);
+  const { totalContentCount, getCount } = useGetContentCount(
+    'reviews',
+    null,
+    placeId
   );
-  const { totalContentCount } = useGetContentCount('reviews', null, placeId);
 
   const handleAddReview = async () => {
-    if (newReview.trim() === '') return;
+    if (newReview.trim() === '' || isLoading) return;
 
     const review = {
       description: newReview,
-      writer: user?.uid ?? '비회원',
+      writer: user?.uid ?? 'unknown',
       date: Date.now(),
       place_id: placeId,
     };
 
-    await addReview(review);
-    setNewReview('');
+    setIsLoading(true);
+
+    try {
+      await addReview(review);
+      setNewReview('');
+      fetchReviews(currentPage);
+      getCount();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (error) {
@@ -116,12 +135,11 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
         )}
       </div>
       <PaginationBar
-        size="sm"
-        isCompact={true}
         currentPage={currentPage}
         totalContents={totalContentCount}
         contentsPerPage={contentsPerPage}
-        paginate={paginate}
+        moveToNextPage={moveToNextPage}
+        moveToPrevPage={moveToPrevPage}
       />
       <input
         type="text"
@@ -129,24 +147,20 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
           user ? '댓글을 남겨주세요.' : '로그인 후 댓글을 남겨주세요.'
         }
         value={newReview}
-        disabled={user ? false : true}
+        disabled={!user}
         onChange={(e) => setNewReview(e.target.value)}
         className="w-full h-[100px] border p-3 rounded-lg mb-2 text-sm focus:outline-none"
       />
-      {newReview.length > 0 ? (
-        <Button
-          onClick={handleAddReview}
-          color="success"
-          variant="flat"
-          className="w-full text-green-600 font-semibold p-2 mt-1"
-        >
-          등록
-        </Button>
-      ) : (
-        <Button isDisabled className="w-full p-2">
-          등록
-        </Button>
-      )}
+
+      <Button
+        onClick={handleAddReview}
+        color={newReview.trim() === '' ? 'default' : 'success'}
+        variant="flat"
+        isDisabled={!user || isLoading || newReview.trim() === ''}
+        className="w-full text-green-600 font-semibold p-2 mt-1"
+      >
+        {isLoading ? <Spinner size="sm" color="success" /> : '등록'}
+      </Button>
     </section>
   );
 };

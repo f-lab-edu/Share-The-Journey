@@ -9,6 +9,7 @@ import {
   startAfter,
   limit,
   QueryDocumentSnapshot,
+  DocumentData,
 } from 'firebase/firestore';
 import db from '@/app/db';
 import { PlaceDetailProps } from '@/types/place';
@@ -16,7 +17,9 @@ import { PlaceDetailProps } from '@/types/place';
 export const useFetchPlaces = (contentsPerPage: number) => {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
+  const [lastDocs, setLastDocs] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,10 +35,10 @@ export const useFetchPlaces = (contentsPerPage: number) => {
         limit(contentsPerPage)
       );
 
-      if (lastDoc && page > 1) {
+      if (page > 1 && lastDocs[page - 2]) {
         placesQuery = query(
           placesQuery,
-          startAfter(lastDoc),
+          startAfter(lastDocs[page - 2]),
           limit(contentsPerPage)
         );
       }
@@ -48,11 +51,10 @@ export const useFetchPlaces = (contentsPerPage: number) => {
 
       setPlaces(fetchedPlaces);
 
-      if (querySnapshot.docs.length < contentsPerPage) {
-        setLastDoc(null);
-      } else {
-        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      }
+      const newLastDocs = [...lastDocs];
+      newLastDocs[page - 1] = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+      setLastDocs(newLastDocs);
     } catch (e) {
       setError('장소 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
     } finally {
@@ -64,7 +66,16 @@ export const useFetchPlaces = (contentsPerPage: number) => {
     fetchPlaces(currentPage);
   }, [currentPage]);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const moveToNextPage = (totalPage: number) =>
+    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
+  const moveToPrevPage = () =>
+    setCurrentPage((page) => (page > 1 ? page - 1 : page));
 
-  return { places, currentPage, paginate, error };
+  return {
+    places,
+    currentPage,
+    error,
+    moveToNextPage,
+    moveToPrevPage,
+  };
 };

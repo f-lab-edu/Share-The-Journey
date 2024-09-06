@@ -1,73 +1,130 @@
 'use client';
 
-import Link from 'next/link';
+import { Input, Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
-import Header from '@/components/Header';
-
 import auth from '@/app/auth';
+import UnknownError from '@/components/UnknownError';
+import { validateEmail, validatePassword } from '@/utils/validate';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<
+    'invalid' | 'unknown' | 'password' | 'email' | null
+  >(null);
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!validateEmail(email)) {
+      setError('email');
+      return;
+    } else if (validatePassword(password)) {
+      setError('password');
+      return;
+    }
+
+    if (isLoading) return;
+
+    setIsLoading(true);
+
     signInWithEmailAndPassword(auth, email, password)
       .then((_res) => {
         router.push('/');
       })
       .catch((err) => {
-        console.error(err);
+        console.error(err.message);
+        if (err.message.includes('invalid-credential')) {
+          setError('invalid');
+        } else {
+          setError('unknown');
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
+  const getErrorMessage = () => {
+    switch (error) {
+      case 'email':
+        return '이메일 형식이 올바르지 않습니다.';
+      case 'password':
+        return '비밀번호는 6자 이상이어야 합니다.';
+    }
+  };
+
+  if (error === 'unknown') {
+    return <UnknownError onClick={() => setError(null)} useAt={'login'} />;
+  }
+
   return (
     <>
-      <Header />
       <h1 className="w-2/4 mx-auto text-center font-bold text-2xl mb-5 mt-32">
-        Login
+        로그인
       </h1>
       <div className="w-2/5 mx-auto rounded-lg bg-slate-100 p-4">
-        <form className="mt-1" onSubmit={handleSubmit}>
-          <label className="block">
-            <h3 className="font-semibold">이메일</h3>
-            <input
-              className="my-2 rounded-md w-full p-1 px-2"
-              type="email"
+        <form className="flex flex-wrap" onSubmit={handleSubmit}>
+          <div className="mb-3 font-semibold w-full">
+            {error === 'invalid' && (
+              <p className="font-semibold text-center text-red-600">
+                이메일 또는 비밀번호를 확인해주세요.
+              </p>
+            )}
+            <Input
+              className="bg-white rounded-xl"
+              isInvalid={error === 'email' || error === 'invalid'}
+              errorMessage={getErrorMessage()}
+              variant="bordered"
+              type="text"
               name="email"
+              label="이메일"
+              labelPlacement="outside"
+              placeholder="example@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </label>
-          <label className="block">
-            <h3 className="font-semibold">비밀번호</h3>
-            <input
-              className="rounded-md w-full my-2 p-1 px-2"
+          </div>
+          <div className="mb-5 font-semibold w-full">
+            <Input
+              variant="bordered"
+              isInvalid={error === 'password' || error === 'invalid'}
+              errorMessage={getErrorMessage()}
+              label="비밀번호"
+              labelPlacement="outside"
+              placeholder="비밀번호를 입력해주세요."
+              className="bg-white rounded-xl"
               type="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </label>
-          <p className="text-sm text-center my-2">아직 회원이 아니신가요?</p>
-          <Link href="/signUp">
-            <button
-              className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
-              type="button"
-            >
-              Sign Up
-            </button>
-          </Link>
-          <button
-            className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold mb-2"
+          </div>
+          <Button
+            className="block bg-green-600 rounded-2xl p-2 w-full text-white font-semibold mb-3"
             type="submit"
+            isDisabled={isLoading}
           >
-            Login
-          </button>
+            {isLoading ? <Spinner size="sm" color="default" /> : '로그인'}
+          </Button>
+          <Button
+            className="block bg-yellow-400 rounded-2xl p-2 w-full mb-3 font-semibold"
+            type="button"
+            isDisabled={isLoading}
+            onClick={() => {
+              router.push('/signUp');
+            }}
+          >
+            회원가입
+          </Button>
+          <p className="text-sm text-center my-1 mx-auto">
+            아직 회원이 아니시라면 회원가입을 눌러주세요.
+          </p>
         </form>
       </div>
     </>

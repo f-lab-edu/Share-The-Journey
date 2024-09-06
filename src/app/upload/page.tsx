@@ -1,21 +1,29 @@
 'use client';
 
-import { Input, Checkbox, CheckboxGroup } from '@nextui-org/react';
+import {
+  Input,
+  Checkbox,
+  CheckboxGroup,
+  Button,
+  Spinner,
+} from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent, useContext } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-import Header from '@/components/Header';
 import db from '../db';
 import { validateNewPlaceForm } from '@/utils/validate';
 import { AuthContext } from '../AuthContext';
 import { NewPlaceForm } from '@/types/place';
+import UnknownError from '@/components/UnknownError';
 
 const Page = () => {
   const { user } = useContext(AuthContext);
   const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({});
   const [files, setFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [error, setError] = useState<'error' | null>(null);
   const router = useRouter();
 
   if (!user) {
@@ -66,6 +74,12 @@ const Page = () => {
       return;
     }
 
+    if (isUploading) {
+      return;
+    }
+
+    setIsUploading(true);
+
     try {
       let imgUrls: string[] = [];
 
@@ -90,13 +104,18 @@ const Page = () => {
       await addDoc(collection(db, 'places'), newPlaceData);
       router.push('/');
     } catch (e) {
-      console.error('Error adding document: ', e);
+      setError('error');
+    } finally {
+      setIsUploading(false);
     }
   };
 
+  if (error) {
+    return <UnknownError onClick={() => setError(null)} useAt={'upload'} />;
+  }
+
   return (
     <>
-      <Header />
       <h1 className="mt-20 text-center font-bold text-2xl mb-5">
         추천 여행지 등록하기
       </h1>
@@ -225,9 +244,17 @@ const Page = () => {
               onChange={handleFileChange}
             />
           </label>
-          <button className="w-full bg-green-600 text-white font-semibold p-2 rounded-lg my-3">
-            여행지 등록하기
-          </button>
+          <Button
+            type="submit"
+            isDisabled={isUploading}
+            className="w-full bg-green-600 text-white text-md font-semibold p-2 rounded-lg my-3"
+          >
+            {isUploading ? (
+              <Spinner size="sm" color="default" />
+            ) : (
+              '여행지 등록하기'
+            )}
+          </Button>
         </form>
       </div>
     </>
