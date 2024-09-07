@@ -2,7 +2,7 @@ import { Button } from '@nextui-org/react';
 
 type UnknownErrorProps = {
   onClick: () => void;
-  useAt: 'login' | 'signUp' | 'upload';
+  useAt: 'login' | 'signUp' | 'upload' | 'edit';
 };
 
 const UnknownError = ({ onClick, useAt }: UnknownErrorProps) => {
@@ -14,6 +14,8 @@ const UnknownError = ({ onClick, useAt }: UnknownErrorProps) => {
         return '회원가입 페이지로 이동';
       case 'upload':
         return '업로드 페이지로 이동';
+      case 'edit':
+        return '수정 페이지로 이동';
     }
   };
 
@@ -25,6 +27,8 @@ const UnknownError = ({ onClick, useAt }: UnknownErrorProps) => {
         return '회원가입 중 오류가 발생했습니다.';
       case 'upload':
         return '업로드 중 오류가 발생했습니다.';
+      case 'edit':
+        return '수정 중 오류가 발생했습니다.';
     }
   };
 
