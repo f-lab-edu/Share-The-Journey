@@ -12,10 +12,10 @@ const useUploadImgs = () => {
 
     if (files.length > 0) {
       const storage = getStorage();
-      const uploadPromises = files.map((file) => {
+      const uploadPromises = files.map(file => {
         const encodedFileName = encodeFileName(file.name);
         const imageRef = ref(storage, `images/${encodedFileName}`);
-        return uploadBytes(imageRef, file).then(() => getDownloadURL(imageRef));
+        return uploadBytes(imageRef, file).then(() => getDownloadURL(imageRef)); // COM: await과 then을 각각 언제쓸까?
       });
       imgUrls = await Promise.all(uploadPromises);
     }

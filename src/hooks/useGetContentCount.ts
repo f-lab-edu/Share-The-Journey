@@ -24,7 +24,7 @@ export const useGetContentCount = (
 
       if (searchQuery) {
         const snapshot = await getDocs(countQuery);
-        const filteredSnapshot = snapshot.docs.filter((doc) =>
+        const filteredSnapshot = snapshot.docs.filter(doc =>
           doc.data().name.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setTotalContentCount(filteredSnapshot.length);
@@ -40,6 +40,7 @@ export const useGetContentCount = (
     }
   };
 
+  // Q: 여기서는 인자가 바뀔 때마다 리렌더링이 안돼도 되는지?
   useEffect(() => {
     getCount();
   }, []);

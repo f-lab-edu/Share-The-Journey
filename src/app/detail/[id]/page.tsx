@@ -7,6 +7,7 @@ import db from '@/app/db';
 import { PlaceDetailProps } from '@/types/place';
 import StarIcon from '@/icons/starIcon';
 
+// COM: fetchPlace 함수가 useFetchPlace 함수와 중복이 아닌지?
 const fetchPlace = async (id: string): Promise<PlaceDetailProps | null> => {
   const docRef = doc(db, 'places', id);
   const docSnap = await getDoc(docRef);
@@ -28,6 +29,7 @@ const getUserName = async (uid: string) => {
 };
 
 const Page = async ({ params }: { params: { id: string } }) => {
+  // Q: async 함수로 컴포넌트 내부에서 fetch 결과를 바로 쓰는것과 따로 useState로 관리하는 것의 차이는 뭘까?
   const place = await fetchPlace(params.id);
 
   if (!place) {
@@ -69,32 +71,32 @@ const PlaceInfo = async ({
     (await getUserName(registrant)) ?? '유저의 이름을 가져오지 못했습니다.';
 
   return (
-    <section className="bg-white p-3 w-3/5 mx-auto mb-10 text-slate-600">
-      <h1 className="text-xl font-extrabold mb-5 flex items-center gap-1">
+    <section className='bg-white p-3 w-3/5 mx-auto mb-10 text-slate-600'>
+      <h1 className='text-xl font-extrabold mb-5 flex items-center gap-1'>
         {name}
         <StarIcon />
-        <span className="font-semibold text-sm text-slate-600">{score}</span>
+        <span className='font-semibold text-sm text-slate-600'>{score}</span>
       </h1>
-      <div className="flex justify-between mb-3">
-        <h3 className="font-bold mb-3 text-medium text-slate-400">
+      <div className='flex justify-between mb-3'>
+        <h3 className='font-bold mb-3 text-medium text-slate-400'>
           작성자{' '}
-          <p className="font-medium pt-1 text-slate-600 text-sm">{userName}</p>
+          <p className='font-medium pt-1 text-slate-600 text-sm'>{userName}</p>
         </h3>
-        <div className="mb-3 font-bold text-slate-400">
-          위치 <p className="font-medium text-sm text-slate-600">{location}</p>
+        <div className='mb-3 font-bold text-slate-400'>
+          위치 <p className='font-medium text-sm text-slate-600'>{location}</p>
         </div>
-        <div className="mb-3 font-bold text-slate-400">
+        <div className='mb-3 font-bold text-slate-400'>
           편의시설{' '}
-          <p className="font-medium text-sm text-slate-600">{amenitiesText}</p>{' '}
+          <p className='font-medium text-sm text-slate-600'>{amenitiesText}</p>{' '}
         </div>
-        <div className="mb-3 font-bold text-slate-400">
+        <div className='mb-3 font-bold text-slate-400'>
           가격{' '}
-          <p className="text-sm font-semibold text-slate-600">{priceText}</p>
+          <p className='text-sm font-semibold text-slate-600'>{priceText}</p>
         </div>
       </div>
-      <div className="text-lg font-bold text-slate-400">
+      <div className='text-lg font-bold text-slate-400'>
         작성자의 리뷰
-        <p className="font-bold text-medium text-slate-600">{review}</p>
+        <p className='font-bold text-medium text-slate-600'>{review}</p>
       </div>
     </section>
   );

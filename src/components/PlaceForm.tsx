@@ -27,11 +27,13 @@ type PlaceFormProps = {
 const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
   const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({
     ...initialData,
-    amenities: initialData.amenities ?? [],
+    amenities: initialData.amenities ?? [], // Q: ameninties만 따로 예외처리 해야하는지?
   });
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<'error' | null>(null);
+
+  // COM: 아래 세 개의 훅 모두 커스텀 훅이어야 할 이유가 있을까? 있다면 왜일까?
   const { updatePlace } = useUpdatePlace();
   const { uploadImgs } = useUploadImgs();
   const { uploadPlace } = useUploadPlace();
@@ -39,7 +41,7 @@ const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewPlace((prev) => ({
+    setNewPlace(prev => ({
       ...prev,
       [name]: name === 'price' || name === 'score' ? parseFloat(value) : value,
     }));
@@ -47,11 +49,11 @@ const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
-    setNewPlace((prev) => {
+    setNewPlace(prev => {
       const prevAmenities = prev.amenities ?? [];
       const newAmenities = checked
         ? [...prevAmenities, value]
-        : prevAmenities.filter((a) => a !== value);
+        : prevAmenities.filter(a => a !== value);
       return {
         ...prev,
         amenities: newAmenities,
@@ -106,67 +108,67 @@ const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
   }
 
   return (
-    <div className="w-3/5 mx-auto bg-slate-100 p-4 rounded-lg mb-10">
-      <form className="flex flex-wrap" onSubmit={handleSubmit}>
-        <div className="mb-3 font-semibold w-full">
+    <div className='w-3/5 mx-auto bg-slate-100 p-4 rounded-lg mb-10'>
+      <form className='flex flex-wrap' onSubmit={handleSubmit}>
+        <div className='mb-3 font-semibold w-full'>
           <Input
-            type="text"
+            type='text'
             isRequired
-            name="name"
-            label="이름"
-            labelPlacement="outside"
-            placeholder="이름을 입력해 주세요."
-            variant="bordered"
-            className="bg-white rounded-xl"
+            name='name'
+            label='이름'
+            labelPlacement='outside'
+            placeholder='이름을 입력해 주세요.'
+            variant='bordered'
+            className='bg-white rounded-xl'
             value={newPlace.name}
             onChange={handleChange}
           />
         </div>
-        <div className="mb-3 font-semibold w-full">
+        <div className='mb-3 font-semibold w-full'>
           <Input
-            type="text"
+            type='text'
             isRequired
-            name="location"
-            label="위치"
-            labelPlacement="outside"
-            placeholder="위치를 입력해 주세요. ex) 서울특별시 강남구 역삼동 123-45"
-            variant="bordered"
-            className="bg-white rounded-xl"
+            name='location'
+            label='위치'
+            labelPlacement='outside'
+            placeholder='위치를 입력해 주세요. ex) 서울특별시 강남구 역삼동 123-45'
+            variant='bordered'
+            className='bg-white rounded-xl'
             value={newPlace.location}
             onChange={handleChange}
           />
         </div>
-        <div className="mb-3 font-semibold w-full">
+        <div className='mb-3 font-semibold w-full'>
           <Input
-            color="default"
+            color='default'
             isRequired
-            name="price"
-            type="number"
-            placeholder="무료는 0으로 입력해 주세요."
-            label="가격"
-            labelPlacement="outside"
-            variant="bordered"
-            className="bg-white rounded-xl"
+            name='price'
+            type='number'
+            placeholder='무료는 0으로 입력해 주세요.'
+            label='가격'
+            labelPlacement='outside'
+            variant='bordered'
+            className='bg-white rounded-xl'
             value={newPlace.price?.toString()}
             min={0}
             onChange={handleChange}
             endContent={
-              <div className="pointer-events-none flex items-center">
-                <span className="text-default-400 text-small">₩</span>
+              <div className='pointer-events-none flex items-center'>
+                <span className='text-default-400 text-small'>₩</span>
               </div>
             }
           />
         </div>
-        <div className="mb-3 font-semibold w-full">
+        <div className='mb-3 font-semibold w-full'>
           <Input
-            label="평점"
-            labelPlacement="outside"
-            placeholder="0~5 사이의 숫자를 입력해 주세요. ex) 4.5"
+            label='평점'
+            labelPlacement='outside'
+            placeholder='0~5 사이의 숫자를 입력해 주세요. ex) 4.5'
             isRequired
-            name="score"
-            variant="bordered"
-            className="bg-white rounded-xl"
-            type="number"
+            name='score'
+            variant='bordered'
+            className='bg-white rounded-xl'
+            type='number'
             value={newPlace.score?.toString()}
             step={0.1}
             min={0}
@@ -174,42 +176,42 @@ const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
             onChange={handleChange}
           />
         </div>
-        <div className="mb-3 font-semibold w-full">
+        <div className='mb-3 font-semibold w-full'>
           <Input
-            type="text"
-            label="한줄평"
-            labelPlacement="outside"
-            placeholder="여행지의 간단한 소감을 입력해주세요!"
+            type='text'
+            label='한줄평'
+            labelPlacement='outside'
+            placeholder='여행지의 간단한 소감을 입력해주세요!'
             isRequired
-            name="review"
-            variant="bordered"
-            className="bg-white rounded-xl"
+            name='review'
+            variant='bordered'
+            className='bg-white rounded-xl'
             value={newPlace.review}
             onChange={handleChange}
           />
         </div>
-        <div className="mb-3 text-black w-full">
+        <div className='mb-3 text-black w-full'>
           <CheckboxGroup
-            className="label:text-black"
+            className='label:text-black'
             label={
-              <span className="text-black text-sm font-semibold">편의시설</span>
+              <span className='text-black text-sm font-semibold'>편의시설</span>
             }
-            orientation="horizontal"
-            color="primary"
-            radius="md"
+            orientation='horizontal'
+            color='primary'
+            radius='md'
             value={newPlace.amenities}
           >
             <Checkbox
-              size="md"
-              value="화장실"
+              size='md'
+              value='화장실'
               checked={(newPlace.amenities ?? []).includes('화장실')}
               onChange={handleCheckboxChange}
             >
               화장실
             </Checkbox>
             <Checkbox
-              size="md"
-              value="주차장"
+              size='md'
+              value='주차장'
               checked={(newPlace.amenities ?? []).includes('주차장')}
               onChange={handleCheckboxChange}
             >
@@ -218,31 +220,31 @@ const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
           </CheckboxGroup>
         </div>
         {mode === 'upload' && (
-          <label className="block">
-            <h3 className="text-sm font-semibold">사진</h3>
-            <p className="text-sm text-red-400">
+          <label className='block'>
+            <h3 className='text-sm font-semibold'>사진</h3>
+            <p className='text-sm text-red-400'>
               이미지는 수정할 수 없으니 신중하게 골라주세요.
             </p>
             <input
-              className="w-full p-1 my-2 text-slate-400
+              className='w-full p-1 my-2 text-slate-400
               file:mr-4 file:py-2 file:px-4
               file:rounded-full file:border-0
               file:text-sm file:font-semibold
               file:bg-blue-600 file:text-white
-              hover:file:bg-blue-200 hover:file:text-slate-400"
-              type="file"
-              accept="image/*"
+              hover:file:bg-blue-200 hover:file:text-slate-400'
+              type='file'
+              accept='image/*'
               multiple={true}
               onChange={handleFileChange}
             />
           </label>
         )}
         <Button
-          type="submit"
+          type='submit'
           isDisabled={isSubmitting}
-          className="w-full bg-green-600 text-white text-md font-semibold p-2 rounded-lg my-3"
+          className='w-full bg-green-600 text-white text-md font-semibold p-2 rounded-lg my-3'
         >
-          {isSubmitting ? <Spinner size="sm" color="default" /> : '저장하기'}
+          {isSubmitting ? <Spinner size='sm' color='default' /> : '저장하기'}
         </Button>
       </form>
     </div>
