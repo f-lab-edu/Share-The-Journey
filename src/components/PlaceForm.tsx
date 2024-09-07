@@ -31,7 +31,7 @@ const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
   });
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<'error' | null>('error');
+  const [error, setError] = useState<'error' | null>(null);
   const { updatePlace } = useUpdatePlace();
   const { uploadImgs } = useUploadImgs();
   const { uploadPlace } = useUploadPlace();
