@@ -1,3 +1,4 @@
+// COM(MINOR): Search/SearchBar, Search/Result, Search/ResultCard 이런 식으로 폴더를 나누는 것도 좋을 것 같다.
 'use client';
 
 import { useState } from 'react';
@@ -17,19 +18,19 @@ const SearchBar = () => {
   };
 
   return (
-    <section className="w-8/12 mx-auto">
+    <section className='w-8/12 mx-auto'>
       <form
         onSubmit={handleSearchSubmit}
-        className="w-full flex justify-center"
+        className='w-full flex justify-center'
       >
         <Input
-          type="search"
-          placeholder="여행지를 검색해보세요."
-          className="w-3/4 rounded-3xl px-4 py-2 mx-auto text-sm"
+          type='search'
+          placeholder='여행지를 검색해보세요.'
+          className='w-3/4 rounded-3xl px-4 py-2 mx-auto text-sm'
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={e => setSearchQuery(e.target.value)}
           startContent={<SearchIcon size={20} />}
-          size="lg"
+          size='lg'
         />
       </form>
     </section>
