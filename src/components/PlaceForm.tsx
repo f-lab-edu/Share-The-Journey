@@ -8,6 +8,7 @@ import {
   Spinner,
 } from '@nextui-org/react';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useUpdatePlace } from '@/hooks/useUpdatePlace';
 import { NewPlaceForm } from '@/types/place';
@@ -25,8 +26,9 @@ const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
     amenities: initialData.amenities ?? [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<'error' | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { updatePlace } = useUpdatePlace();
+  const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,6 +57,7 @@ const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
+    setError(null);
 
     const newPlaceValidateInfo = validateNewPlaceForm(newPlace as NewPlaceForm);
 
@@ -66,19 +69,34 @@ const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
     try {
       if (mode === 'edit') {
         await updatePlace(id as string, newPlace as NewPlaceForm);
+        router.push(`/detail/${id}`);
       } else {
         console.log('uploading...');
       }
     } catch (error) {
-      console.error(error);
-      setError('error');
+      setError(
+        '업로드 혹은 업데이트중 에러가 발생했습니다. 다시 시도해주세요.'
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   if (error) {
-    return <div>Unknown Error Occurred! {error}</div>;
+    return (
+      <div className="flex flex-col gap-3 items-center justify-center h-screen text-red-600 font-bold text-2xl">
+        {error}
+        <Button
+          color="danger"
+          size="lg"
+          onClick={() => {
+            router.back();
+          }}
+        >
+          뒤로가기
+        </Button>
+      </div>
+    );
   }
 
   return (
