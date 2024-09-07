@@ -15,6 +15,8 @@ import {
 import db from '@/app/db';
 import { Review } from '@/types/review';
 
+// COM: useFetchMyPlaces와 거의 동일한 피드백을 할 수 있을듯. 거기 참고하기.
+// 근데 그뜻은, 뭔가 중복되는 부분이 있다는 것일수도 있지 않을까?
 export const useFetchReviews = (placeId: string, contentPerPage: number) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -46,7 +48,7 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
       }
 
       const querySnapshot = await getDocs(reviewsQuery);
-      const reviewData = querySnapshot.docs.map((doc) => ({
+      const reviewData = querySnapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
       })) as Review[];
@@ -69,9 +71,9 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
   }, [currentPage]);
 
   const moveToNextPage = (totalPage: number) =>
-    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
+    setCurrentPage(page => (page < totalPage ? page + 1 : page));
   const moveToPrevPage = () =>
-    setCurrentPage((page) => (page > 1 ? page - 1 : page));
+    setCurrentPage(page => (page > 1 ? page - 1 : page));
 
   return {
     reviews,

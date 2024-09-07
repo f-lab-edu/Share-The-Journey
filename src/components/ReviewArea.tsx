@@ -50,18 +50,18 @@ const ReviewCard = (props: { review: Review }) => {
     return <div>Loading...</div>;
   } else if (error) {
     return (
-      <div className="mb-5 text-red-500 font-bold bg-white p-3 rounded-md">
+      <div className='mb-5 text-red-500 font-bold bg-white p-3 rounded-md'>
         {error}
       </div>
     );
   }
   return (
-    <div key={review.id} className="my-3 p-3 border-b-1 last:border-0">
-      <div className="flex justify-between">
-        <h3 className="font-bold text-slate-700">{username}</h3>
+    <div key={review.id} className='my-3 p-3 border-b-1 last:border-0'>
+      <div className='flex justify-between'>
+        <h3 className='font-bold text-slate-700'>{username}</h3>
       </div>
-      <p className="mb-1 text-sm">{review.description}</p>
-      <p className="font-semibold text-zinc-300">{formattedDate}</p>
+      <p className='mb-1 text-sm'>{review.description}</p>
+      <p className='font-semibold text-zinc-300'>{formattedDate}</p>
     </div>
   );
 };
@@ -70,7 +70,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
-  const contentsPerPage = 5;
+  const contentsPerPage = 5; // COM(MINOR): 상수가 렌더링 과정에 평가되어야 할까?
   const {
     reviews,
     currentPage,
@@ -111,8 +111,8 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
 
   if (error) {
     return (
-      <div className="text-red-500 font-bold p-3 rounded-md w-3/5 mx-auto">
-        <h2 className="text-xl font-extrabold mb-3 ml-2 text-slate-600">
+      <div className='text-red-500 font-bold p-3 rounded-md w-3/5 mx-auto'>
+        <h2 className='text-xl font-extrabold mb-3 ml-2 text-slate-600'>
           댓글
         </h2>
         {error}
@@ -121,15 +121,15 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   }
 
   return (
-    <section className="w-3/5 mx-auto mb-10">
-      <h2 className="text-xl font-extrabold mb-3 ml-2 text-slate-600">댓글</h2>
+    <section className='w-3/5 mx-auto mb-10'>
+      <h2 className='text-xl font-extrabold mb-3 ml-2 text-slate-600'>댓글</h2>
       <div>
         {reviews.length > 0 ? (
           reviews.map((review, index) => {
             return <ReviewCard key={index} review={review} />;
           })
         ) : (
-          <p className="mb-5 p-2 text-slate-400">
+          <p className='mb-5 p-2 text-slate-400'>
             댓글이 없습니다. 의견을 공유해주세요.
           </p>
         )}
@@ -142,24 +142,24 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
         moveToPrevPage={moveToPrevPage}
       />
       <input
-        type="text"
+        type='text'
         placeholder={
           user ? '댓글을 남겨주세요.' : '로그인 후 댓글을 남겨주세요.'
         }
         value={newReview}
         disabled={!user}
-        onChange={(e) => setNewReview(e.target.value)}
-        className="w-full h-[100px] border p-3 rounded-lg mb-2 text-sm focus:outline-none"
+        onChange={e => setNewReview(e.target.value)}
+        className='w-full h-[100px] border p-3 rounded-lg mb-2 text-sm focus:outline-none'
       />
 
       <Button
         onClick={handleAddReview}
         color={newReview.trim() === '' ? 'default' : 'success'}
-        variant="flat"
+        variant='flat'
         isDisabled={!user || isLoading || newReview.trim() === ''}
-        className="w-full text-green-600 font-semibold p-2 mt-1"
+        className='w-full text-green-600 font-semibold p-2 mt-1'
       >
-        {isLoading ? <Spinner size="sm" color="success" /> : '등록'}
+        {isLoading ? <Spinner size='sm' color='success' /> : '등록'}
       </Button>
     </section>
   );

@@ -15,6 +15,7 @@ const useFetchPlace = async (id: string): Promise<PlaceDetailProps | null> => {
     return null;
   };
 
+  // COM: 여기서 호출결과를 직접 반환하는 이유는? 이 구조는 어떤 단점이 있을까?
   return await fetchPlace();
 };
 
