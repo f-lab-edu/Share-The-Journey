@@ -10,7 +10,10 @@ import {
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import UnknownError from './UnknownError';
 import { useUpdatePlace } from '@/hooks/useUpdatePlace';
+import { useUploadImgs } from '@/hooks/useUploadImgs';
+import { useUploadPlace } from '@/hooks/useUploadPlace';
 import { NewPlaceForm } from '@/types/place';
 import { validateNewPlaceForm } from '@/utils/validate';
 
@@ -18,16 +21,20 @@ type PlaceFormProps = {
   initialData?: Partial<NewPlaceForm>;
   mode: 'upload' | 'edit';
   id?: string;
+  userId?: string;
 };
 
-const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
+const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
   const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({
     ...initialData,
     amenities: initialData.amenities ?? [],
   });
+  const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<'error' | null>('error');
   const { updatePlace } = useUpdatePlace();
+  const { uploadImgs } = useUploadImgs();
+  const { uploadPlace } = useUploadPlace();
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +59,12 @@ const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
     });
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles(Array.from(e.target.files));
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
@@ -70,33 +83,26 @@ const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
       if (mode === 'edit') {
         await updatePlace(id as string, newPlace as NewPlaceForm);
         router.push(`/detail/${id}`);
-      } else {
-        console.log('uploading...');
+      } else if (mode === 'upload') {
+        const imgUrls = await uploadImgs(files);
+        const newPlaceData = {
+          ...newPlace,
+          imgUrls,
+          registrant: userId,
+        } as NewPlaceForm;
+
+        await uploadPlace(newPlaceData);
+        router.push('/');
       }
     } catch (error) {
-      setError(
-        '업로드 혹은 업데이트중 에러가 발생했습니다. 다시 시도해주세요.'
-      );
+      setError('error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   if (error) {
-    return (
-      <div className="flex flex-col gap-3 items-center justify-center h-screen text-red-600 font-bold text-2xl">
-        {error}
-        <Button
-          color="danger"
-          size="lg"
-          onClick={() => {
-            router.back();
-          }}
-        >
-          뒤로가기
-        </Button>
-      </div>
-    );
+    return <UnknownError onClick={() => setError(null)} useAt={mode} />;
   }
 
   return (
@@ -211,6 +217,26 @@ const PlaceForm = ({ initialData = {}, mode, id }: PlaceFormProps) => {
             </Checkbox>
           </CheckboxGroup>
         </div>
+        {mode === 'upload' && (
+          <label className="block">
+            <h3 className="text-sm font-semibold">사진</h3>
+            <p className="text-sm text-red-400">
+              이미지는 수정할 수 없으니 신중하게 골라주세요.
+            </p>
+            <input
+              className="w-full p-1 my-2 text-slate-400
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-600 file:text-white
+              hover:file:bg-blue-200 hover:file:text-slate-400"
+              type="file"
+              accept="image/*"
+              multiple={true}
+              onChange={handleFileChange}
+            />
+          </label>
+        )}
         <Button
           type="submit"
           isDisabled={isSubmitting}
