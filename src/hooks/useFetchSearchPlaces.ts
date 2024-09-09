@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 
-import db from '@/app/db';
+import db from '@/libs/db';
 import { PlaceDetailProps } from '@/types/place';
 
 export const useFetchSearchPlaces = (

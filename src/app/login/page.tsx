@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
-import auth from '@/app/auth';
+import auth from '@/libs/auth';
 import UnknownError from '@/components/UnknownError';
 import { validateEmail, validatePassword } from '@/utils/validate';
 

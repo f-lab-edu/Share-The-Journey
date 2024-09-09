@@ -6,9 +6,9 @@ import { format } from 'date-fns';
 import { collection, setDoc, doc, getDoc } from 'firebase/firestore';
 import { Button, Spinner } from '@nextui-org/react';
 
-import db from '@/app/db';
+import db from '@/libs/db';
 import { Review } from '@/types/review';
-import { AuthContext } from '@/app/AuthContext';
+import { AuthContext } from '@/contexts/AuthContext';
 import { useFetchReviews } from '@/hooks/useFetchReviews';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
 import PaginationBar from './Pagination';

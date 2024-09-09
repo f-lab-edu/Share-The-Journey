@@ -3,7 +3,7 @@ import { User } from 'firebase/auth';
 
 import { AuthContext } from './AuthContext';
 
-import auth from './auth';
+import auth from '@/libs/auth';
 
 type AuthProviderProps = {
   children: ReactNode;

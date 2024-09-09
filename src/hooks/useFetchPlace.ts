@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 
-import db from '@/app/db';
+import db from '@/libs/db';
 import { PlaceDetailProps } from '@/types/place';
 
 const useFetchPlace = async (id: string): Promise<PlaceDetailProps | null> => {

@@ -2,7 +2,7 @@
 
 import { useContext } from 'react';
 
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '@/contexts/AuthContext';
 import PlaceForm from '@/components/PlaceForm';
 
 const Page = () => {

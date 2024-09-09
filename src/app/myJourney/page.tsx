@@ -9,7 +9,7 @@ import PaginationBar from '@/components/Pagination';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
 import { useDeletePlace } from '@/hooks/useDeletePlace';
 import { useGetMyPlacesCount } from '@/hooks/useGetMyPlacesCount';
-import { AuthContext } from '@/app/AuthContext';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const Page = () => {
   const { user } = useContext(AuthContext);

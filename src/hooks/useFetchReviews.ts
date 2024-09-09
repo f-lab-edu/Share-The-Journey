@@ -12,7 +12,7 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
 } from 'firebase/firestore';
-import db from '@/app/db';
+import db from '@/libs/db';
 import { Review } from '@/types/review';
 
 export const useFetchReviews = (placeId: string, contentPerPage: number) => {
