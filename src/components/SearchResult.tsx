@@ -6,13 +6,13 @@ import SearchResultCard from './SearchResultCard';
 import PaginationBar from './Pagination';
 import { useFetchSearchPlaces } from '@/hooks/useFetchSearchPlaces';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
+import { PER_PAGE } from '@/constants/perPage';
 
 const SearchResult = () => {
-  const contentsPerPage = 5;
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
   const { places, error, currentPage, moveToNextPage, moveToPrevPage } =
-    useFetchSearchPlaces(contentsPerPage, query);
+    useFetchSearchPlaces(PER_PAGE.MAIN_REVIEW_SEARCH, query);
   const { totalContentCount } = useGetContentCount('places', query);
 
   return (
@@ -35,7 +35,7 @@ const SearchResult = () => {
               <PaginationBar
                 currentPage={currentPage}
                 totalContents={totalContentCount}
-                contentsPerPage={contentsPerPage}
+                contentsPerPage={PER_PAGE.MAIN_REVIEW_SEARCH}
                 moveToNextPage={moveToNextPage}
                 moveToPrevPage={moveToPrevPage}
               />

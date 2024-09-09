@@ -11,6 +11,7 @@ import { Review } from '@/types/review';
 import { AuthContext } from '@/contexts/AuthContext';
 import { useFetchReviews } from '@/hooks/useFetchReviews';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
+import { PER_PAGE } from '@/constants/perPage';
 import PaginationBar from './Pagination';
 
 const addReview = async (review: Omit<Review, 'id'>) => {
@@ -70,7 +71,6 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
-  const contentsPerPage = 5;
   const {
     reviews,
     currentPage,
@@ -78,7 +78,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
     moveToNextPage,
     moveToPrevPage,
     fetchReviews,
-  } = useFetchReviews(placeId, contentsPerPage);
+  } = useFetchReviews(placeId, PER_PAGE.MAIN_REVIEW_SEARCH);
   const { totalContentCount, getCount } = useGetContentCount(
     'reviews',
     null,
@@ -137,7 +137,7 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
       <PaginationBar
         currentPage={currentPage}
         totalContents={totalContentCount}
-        contentsPerPage={contentsPerPage}
+        contentsPerPage={PER_PAGE.MAIN_REVIEW_SEARCH}
         moveToNextPage={moveToNextPage}
         moveToPrevPage={moveToPrevPage}
       />
