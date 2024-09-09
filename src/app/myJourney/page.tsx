@@ -4,7 +4,7 @@ import { useState, useContext, useEffect } from 'react';
 import { Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
-import MyPlaceCard from '@/components/MyPlaceCard';
+import MyPlaceCard from '@/components/Card/MyPlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
 import { useDeletePlace } from '@/hooks/useDeletePlace';

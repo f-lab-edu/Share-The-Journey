@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 
 import SearchResultCard from './SearchResultCard';
-import PaginationBar from './Pagination';
+import PaginationBar from '@/components/Pagination';
 import { useFetchSearchPlaces } from '@/hooks/useFetchSearchPlaces';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
 import { PER_PAGE } from '@/constants/perPage';

@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 
 import Header from '@/components/Header';
-import SearchBar from '@/components/SearchBar';
-import SearchResult from '@/components/SearchResult';
+import SearchBar from '@/components/Search/SearchBar';
+import SearchResult from '@/components/Search/SearchResult';
 
 const Page = () => {
   return (

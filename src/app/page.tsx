@@ -1,8 +1,8 @@
 'use client';
 
 import Header from '@/components/Header';
-import SearchBar from '@/components/SearchBar';
-import HomePlaceCard from '@/components/HomePlaceCard';
+import SearchBar from '@/components/Search/SearchBar';
+import HomePlaceCard from '@/components/Card/HomePlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchPlaces } from '@/hooks/useFetchPlaces';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
