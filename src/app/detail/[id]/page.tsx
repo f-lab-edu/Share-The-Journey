@@ -1,22 +1,13 @@
 import currency from 'currency.js';
 import { doc, getDoc } from 'firebase/firestore';
+
 import ReviewArea from '@/components/ReviewArea';
 import ImgCarousel from '@/components/ImgCarousel';
 import db from '@/libs/db';
+import { useFetchPlace } from '@/hooks/useFetchPlace';
 
 import { PlaceDetailProps } from '@/types/place';
 import StarIcon from '@/icons/starIcon';
-
-const fetchPlace = async (id: string): Promise<PlaceDetailProps | null> => {
-  const docRef = doc(db, 'places', id);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    return docSnap.data() as PlaceDetailProps;
-  }
-
-  return null;
-};
 
 const getUserName = async (uid: string) => {
   const userDoc = await getDoc(doc(db, 'users', uid));
@@ -28,7 +19,7 @@ const getUserName = async (uid: string) => {
 };
 
 const Page = async ({ params }: { params: { id: string } }) => {
-  const place = await fetchPlace(params.id);
+  const place = await useFetchPlace(params.id);
 
   if (!place) {
     return <div>해당 장소가 존재하지 않습니다.</div>;
