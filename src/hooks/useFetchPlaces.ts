@@ -11,7 +11,7 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
 } from 'firebase/firestore';
-import db from '@/app/db';
+import db from '@/libs/db';
 import { PlaceDetailProps } from '@/types/place';
 
 export const useFetchPlaces = (contentsPerPage: number) => {

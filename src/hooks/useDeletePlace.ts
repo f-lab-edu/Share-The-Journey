@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { doc, deleteDoc } from 'firebase/firestore';
-import db from '@/app/db';
+import db from '@/libs/db';
 
 export const useDeletePlace = () => {
   const [isLoading, setIsLoading] = useState(false);

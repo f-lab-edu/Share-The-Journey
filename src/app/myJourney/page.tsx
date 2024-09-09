@@ -4,17 +4,17 @@ import { useState, useContext, useEffect } from 'react';
 import { Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
-import MyPlaceCard from '@/components/MyPlaceCard';
+import MyPlaceCard from '@/components/Card/MyPlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
 import { useDeletePlace } from '@/hooks/useDeletePlace';
 import { useGetMyPlacesCount } from '@/hooks/useGetMyPlacesCount';
-import { AuthContext } from '@/app/AuthContext';
+import { AuthContext } from '@/contexts/AuthContext';
+import { PER_PAGE } from '@/constants/perPage';
 
 const Page = () => {
   const { user } = useContext(AuthContext);
   const [uid, setUid] = useState<string | null>(null);
-  const contentPerPage = 9;
   const router = useRouter();
   const { deletePlace, isLoading, deleteError } = useDeletePlace();
 
@@ -40,7 +40,7 @@ const Page = () => {
     moveToNextPage,
     moveToPrevPage,
     fetchMyPlaces,
-  } = useFetchMyPlaces(contentPerPage, uid || '');
+  } = useFetchMyPlaces(PER_PAGE.MY_JOURNEY, uid || '');
   const { totalContentCount, getCount } = useGetMyPlacesCount(uid);
 
   if (!user)
@@ -108,7 +108,7 @@ const Page = () => {
       <PaginationBar
         currentPage={currentPage}
         totalContents={totalContentCount}
-        contentsPerPage={contentPerPage}
+        contentsPerPage={PER_PAGE.MY_JOURNEY}
         moveToNextPage={moveToNextPage}
         moveToPrevPage={moveToPrevPage}
       />

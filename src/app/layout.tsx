@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Providers } from './providers';
+import { Providers } from '../contexts/providers';
 import { Noto_Sans } from 'next/font/google';
 
 const noto = Noto_Sans({

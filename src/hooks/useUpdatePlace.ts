@@ -1,6 +1,6 @@
 import { doc, updateDoc } from 'firebase/firestore';
 
-import db from '@/app/db';
+import db from '@/libs/db';
 import { NewPlaceForm } from '@/types/place';
 
 const useUpdatePlace = () => {
