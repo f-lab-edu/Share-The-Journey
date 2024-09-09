@@ -1,6 +1,7 @@
 'use client';
 
 import currency from 'currency.js';
+import { Spinner } from '@nextui-org/react';
 
 import { useGetUserName } from '@/hooks/useGetUserName';
 import { PlaceDetailProps } from '@/types/place';
@@ -15,7 +16,7 @@ const PlaceInfo = ({
   registrant,
   amenities,
 }: PlaceDetailProps) => {
-  let { userName, nameError } = useGetUserName(registrant);
+  let { userName, nameError, isLoading } = useGetUserName(registrant);
   const priceText =
     price > 0
       ? `${currency(price, {
@@ -42,7 +43,9 @@ const PlaceInfo = ({
       <div className="flex justify-between mb-3">
         <h3 className="font-bold mb-3 text-medium text-slate-400">
           작성자{' '}
-          <p className="font-medium pt-1 text-slate-600 text-sm">{userName}</p>
+          <p className="font-medium pt-1 text-slate-600 text-sm">
+            {isLoading ? <Spinner size="sm" color="default" /> : userName}
+          </p>
         </h3>
         <div className="mb-3 font-bold text-slate-400">
           위치 <p className="font-medium text-sm text-slate-600">{location}</p>

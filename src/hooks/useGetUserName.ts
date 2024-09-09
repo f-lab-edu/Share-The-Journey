@@ -12,7 +12,7 @@ const useGetUserName = (userId: string) => {
 
   useEffect(() => {
     const fetchUserName = async () => {
-      if (!userId || !isLoading) return;
+      if (!userId) return;
 
       setIsLoading(true);
       try {
@@ -30,7 +30,7 @@ const useGetUserName = (userId: string) => {
     fetchUserName();
   }, [userId]);
 
-  return { userName, nameError };
+  return { userName, nameError, isLoading };
 };
 
 export { useGetUserName };
