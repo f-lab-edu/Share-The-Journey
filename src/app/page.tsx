@@ -6,11 +6,11 @@ import HomePlaceCard from '@/components/HomePlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchPlaces } from '@/hooks/useFetchPlaces';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
+import { PER_PAGE } from '@/constants/perPage';
 
 export default function Home() {
-  const contentsPerPage = 5;
   const { places, currentPage, moveToNextPage, moveToPrevPage } =
-    useFetchPlaces(contentsPerPage);
+    useFetchPlaces(PER_PAGE.MAIN_REVIEW_SEARCH);
   const { totalContentCount } = useGetContentCount('places');
 
   return (
@@ -39,7 +39,7 @@ export default function Home() {
         <PaginationBar
           currentPage={currentPage}
           totalContents={totalContentCount}
-          contentsPerPage={contentsPerPage}
+          contentsPerPage={PER_PAGE.MAIN_REVIEW_SEARCH}
           moveToNextPage={moveToNextPage}
           moveToPrevPage={moveToPrevPage}
         />
