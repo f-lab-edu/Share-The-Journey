@@ -7,7 +7,7 @@ import {
   where,
   getCountFromServer,
 } from 'firebase/firestore';
-import db from '@/app/db';
+import db from '@/libs/db';
 
 export const useGetMyPlacesCount = (uid: string | null) => {
   const [totalContentCount, setTotalContentCount] = useState<number>(0);

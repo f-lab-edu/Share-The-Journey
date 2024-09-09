@@ -8,7 +8,7 @@ import {
   getCountFromServer,
   getDocs,
 } from 'firebase/firestore';
-import db from '@/app/db';
+import db from '@/libs/db';
 
 export const useGetContentCount = (
   category: 'places' | 'reviews',

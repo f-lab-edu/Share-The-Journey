@@ -16,8 +16,8 @@ import {
   DropdownMenu,
 } from '@nextui-org/react';
 
-import auth from '@/app/auth';
-import { AuthContext } from '@/app/AuthContext';
+import auth from '@/libs/auth';
+import { AuthContext } from '@/contexts/AuthContext';
 
 import ChevronDown from '@/icons/chevronDown';
 

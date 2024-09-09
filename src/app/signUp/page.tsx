@@ -6,8 +6,8 @@ import { createUserWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { Input, Button, Spinner } from '@nextui-org/react';
 
-import auth from '@/app/auth';
-import db from '@/app/db';
+import auth from '@/libs/auth';
+import db from '@/libs/db';
 import UnknownError from '@/components/UnknownError';
 import { validateEmail } from '@/utils/validate';
 

@@ -2,7 +2,7 @@ import currency from 'currency.js';
 import { doc, getDoc } from 'firebase/firestore';
 import ReviewArea from '@/components/ReviewArea';
 import ImgCarousel from '@/components/ImgCarousel';
-import db from '@/app/db';
+import db from '@/libs/db';
 
 import { PlaceDetailProps } from '@/types/place';
 import StarIcon from '@/icons/starIcon';

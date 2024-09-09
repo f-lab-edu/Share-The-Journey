@@ -13,7 +13,7 @@ import {
   where,
 } from 'firebase/firestore';
 
-import db from '@/app/db';
+import db from '@/libs/db';
 import { PlaceDetailProps } from '@/types/place';
 
 export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
