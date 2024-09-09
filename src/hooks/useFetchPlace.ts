@@ -1,21 +1,43 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 
 import db from '@/libs/db';
 import { PlaceDetailProps } from '@/types/place';
 
-const useFetchPlace = async (id: string): Promise<PlaceDetailProps | null> => {
-  const fetchPlace = async () => {
-    const docRef = doc(db, 'places', id);
-    const docSnap = await getDoc(docRef);
+const useFetchPlace = (id: string) => {
+  const [placeData, setPlaceData] = useState<PlaceDetailProps | null>(null);
+  const [placeError, setPlaceError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    if (docSnap.exists()) {
-      return docSnap.data() as PlaceDetailProps;
-    }
+  useEffect(() => {
+    if (!id) return;
 
-    return null;
-  };
+    const fetchPlace = async () => {
+      setIsLoading(true);
 
-  return await fetchPlace();
+      try {
+        const docRef = doc(db, 'places', id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setPlaceData(data as PlaceDetailProps);
+        } else {
+          setPlaceError('해당 장소가 존재하지 않습니다.');
+        }
+      } catch (error) {
+        setPlaceError('장소 정보를 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPlace();
+  }, [id]);
+
+  return { placeData, placeError, isLoading };
 };
 
 export { useFetchPlace };
