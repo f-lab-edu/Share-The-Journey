@@ -51,7 +51,7 @@ const ImgCarousel = ({ imgUrls }: { imgUrls: string[] }) => {
         ))
       ) : (
         <SwiperSlide>
-          <div className="w-full h-[350px] max-w-[600px] mx-auto">
+          <div className="relative w-full h-[350px] max-w-[600px] mx-auto">
             <Image
               src="/default.png"
               alt="default image"
