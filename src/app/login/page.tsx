@@ -3,51 +3,19 @@
 import { Input, Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 
-import auth from '@/libs/auth';
 import UnknownError from '@/components/UnknownError';
-import { validateEmail, validatePassword } from '@/utils/validate';
+import { useLogin } from '@/hooks/useLogin';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<
-    'invalid' | 'unknown' | 'password' | 'email' | null
-  >(null);
+  const { isLoading, error, login, resetError } = useLogin();
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!validateEmail(email)) {
-      setError('email');
-      return;
-    } else if (validatePassword(password)) {
-      setError('password');
-      return;
-    }
-
-    if (isLoading) return;
-
-    setIsLoading(true);
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((_res) => {
-        router.push('/');
-      })
-      .catch((err) => {
-        console.error(err.message);
-        if (err.message.includes('invalid-credential')) {
-          setError('invalid');
-        } else {
-          setError('unknown');
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    login(email, password);
   };
 
   const getErrorMessage = () => {
@@ -60,7 +28,7 @@ const Page = () => {
   };
 
   if (error === 'unknown') {
-    return <UnknownError onClick={() => setError(null)} useAt={'login'} />;
+    return <UnknownError onClick={resetError} useAt={'login'} />;
   }
 
   return (
