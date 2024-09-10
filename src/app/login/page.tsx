@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import UnknownError from '@/components/UnknownError';
-import { useLogin } from '@/hooks/useLogin';
+import { useLogin } from '@/hooks/auth/useLogin';
 
 const Page = () => {
   const [email, setEmail] = useState('');
