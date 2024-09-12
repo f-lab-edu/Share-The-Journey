@@ -5,13 +5,18 @@ import { setDoc, doc } from 'firebase/firestore';
 
 import auth from '@/libs/auth';
 import db from '@/libs/db';
-import { validateEmail } from '@/utils/validate';
+import { validateEmail, validateNickname } from '@/utils/validate';
 
 const useSignUp = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<
-    'emailInUse' | 'invalidEmail' | 'weakPassword' | 'unknown' | null
+    | 'emailInUse'
+    | 'invalidEmail'
+    | 'weakPassword'
+    | 'unknown'
+    | 'invalidNickname'
+    | null
   >(null);
 
   const signUp = async (email: string, password: string, nickname: string) => {
@@ -19,6 +24,11 @@ const useSignUp = () => {
 
     if (!validateEmail(email)) {
       setError('invalidEmail');
+      return;
+    }
+
+    if (!validateNickname(nickname)) {
+      setError('invalidNickname');
       return;
     }
 

@@ -29,3 +29,9 @@ export const validateEmail = (email: string) => {
 export const validatePassword = (password: string) => {
   return password.length < 6;
 };
+
+export const validateNickname = (nickname: string) => {
+  const nicknameRegex = /^(?!.*\s)[가-힣a-zA-Z0-9]+$/;
+  const nicknameLength = nickname.length >= 2 && nickname.length <= 10;
+  return nicknameRegex.test(nickname) && nicknameLength;
+};
