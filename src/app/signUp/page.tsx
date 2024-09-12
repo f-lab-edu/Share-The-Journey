@@ -1,63 +1,21 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
 import { Input, Button, Spinner } from '@nextui-org/react';
 
-import auth from '@/libs/auth';
-import db from '@/libs/db';
 import UnknownError from '@/components/UnknownError';
-import { validateEmail } from '@/utils/validate';
+import { useSignUp } from '@/hooks/auth/useSignUp';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<
-    'emailInUse' | 'invalidEmail' | 'weakPassword' | 'unknown' | null
-  >(null);
-  const router = useRouter();
+  const { signUp, isLoading, error, resetError } = useSignUp();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validateEmail(email)) {
-      setError('invalidEmail');
-      return;
-    }
 
-    if (isLoading) return;
-
-    setIsLoading(true);
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((res) => {
-        const user = res.user;
-        const userRef = doc(db, 'users', user.uid);
-
-        return setDoc(userRef, {
-          uid: user.uid,
-          email: user.email,
-          nickname,
-        });
-      })
-      .then(() => {
-        router.push('/');
-      })
-      .catch((err) => {
-        if (err.message.includes(AuthErrorCodes.EMAIL_EXISTS)) {
-          setError('emailInUse');
-        } else if (err.message.includes(AuthErrorCodes.WEAK_PASSWORD)) {
-          setError('weakPassword');
-        } else {
-          setError('unknown');
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    signUp(email, password, nickname);
   };
 
   const getErrorMessage = () => {
@@ -72,7 +30,7 @@ const Page = () => {
   };
 
   if (error === 'unknown') {
-    return <UnknownError onClick={() => setError(null)} useAt={'signUp'} />;
+    return <UnknownError onClick={resetError} useAt={'signUp'} />;
   }
 
   return (

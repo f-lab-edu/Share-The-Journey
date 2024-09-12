@@ -1,65 +1,40 @@
 'use client';
 
-import { useEffect, useState, useContext } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useContext } from 'react';
 import { format } from 'date-fns';
-import { collection, setDoc, doc, getDoc } from 'firebase/firestore';
 import { Button, Spinner } from '@nextui-org/react';
 
-import db from '@/libs/db';
 import { Review } from '@/types/review';
 import { AuthContext } from '@/contexts/AuthContext';
 import { useFetchReviews } from '@/hooks/useFetchReviews';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
+import { useGetUserName } from '@/hooks/useGetUserName';
+import { addReview } from '@/utils/addReview';
 import { PER_PAGE } from '@/constants/perPage';
 import PaginationBar from './Pagination';
 
-const addReview = async (review: Omit<Review, 'id'>) => {
-  const newReviewRef = doc(collection(db, 'reviews'));
-  await setDoc(newReviewRef, { ...review, id: newReviewRef.id });
-};
-
 const ReviewCard = (props: { review: Review }) => {
   const { review } = props;
+  const { userName, nameError, isLoading } = useGetUserName(review.writer);
   const formattedDate = format(new Date(review.date), 'yyyy.MM.dd');
-  const router = useRouter();
 
-  const [username, setUsername] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (review.writer === 'unknown') {
-      setUsername('unknown');
-      return;
-    }
-
-    const getUserName = async () => {
-      try {
-        const userDoc = await getDoc(doc(db, 'users', review.writer));
-        if (userDoc.exists()) {
-          setUsername(userDoc.data().nickname);
-        }
-      } catch (error) {
-        setError('리뷰 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
-      }
-    };
-
-    getUserName();
-  }, [review.writer, router]);
-
-  if (username === null) {
-    return <div>Loading...</div>;
-  } else if (error) {
+  if (userName === null || isLoading) {
+    return (
+      <div>
+        <Spinner size="sm" color="default" />
+      </div>
+    );
+  } else if (nameError) {
     return (
       <div className="mb-5 text-red-500 font-bold bg-white p-3 rounded-md">
-        {error}
+        {nameError}
       </div>
     );
   }
   return (
     <div key={review.id} className="my-3 p-3 border-b-1 last:border-0">
       <div className="flex justify-between">
-        <h3 className="font-bold text-slate-700">{username}</h3>
+        <h3 className="font-bold text-slate-700">{userName}</h3>
       </div>
       <p className="mb-1 text-sm">{review.description}</p>
       <p className="font-semibold text-zinc-300">{formattedDate}</p>
