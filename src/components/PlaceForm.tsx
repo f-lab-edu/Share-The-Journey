@@ -11,9 +11,9 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import UnknownError from './UnknownError';
-import { useUpdatePlace } from '@/hooks/useUpdatePlace';
-import { useUploadImgs } from '@/hooks/useUploadImgs';
-import { useUploadPlace } from '@/hooks/useUploadPlace';
+import { updatePlace } from '@/utils/updatePlace';
+import { uploadImgs } from '@/utils/uploadImgs';
+import { uploadPlace } from '@/utils/uploadPlace';
 import { NewPlaceForm } from '@/types/place';
 import { validateNewPlaceForm } from '@/utils/validate';
 
@@ -32,9 +32,6 @@ const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<'error' | null>(null);
-  const { updatePlace } = useUpdatePlace();
-  const { uploadImgs } = useUploadImgs();
-  const { uploadPlace } = useUploadPlace();
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
