@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
@@ -14,24 +14,18 @@ import { PER_PAGE } from '@/constants/perPage';
 
 const Page = () => {
   const { user } = useContext(AuthContext);
-  const [uid, setUid] = useState<string | null>(null);
+  const uid = user?.uid;
   const router = useRouter();
   const { deletePlace, isLoading, deleteError } = useDeletePlace();
 
   const handleDeletePlace = async (id: string) => {
-    await deletePlace(id).then(() => {
-      if (!error) {
-        fetchMyPlaces(currentPage, uid || '');
-        getCount(uid);
-      }
-    });
-  };
+    await deletePlace(id);
 
-  useEffect(() => {
-    if (user?.uid) {
-      setUid(user.uid);
+    if (!error) {
+      fetchMyPlaces(currentPage, uid || '');
+      getCount(uid);
     }
-  }, [user]);
+  };
 
   const {
     places,
@@ -41,14 +35,15 @@ const Page = () => {
     moveToPrevPage,
     fetchMyPlaces,
   } = useFetchMyPlaces(PER_PAGE.MY_JOURNEY, uid || '');
-  const { totalContentCount, getCount } = useGetMyPlacesCount(uid);
+  const { totalContentCount, getCount } = useGetMyPlacesCount(uid || '');
 
-  if (!user)
+  if (!user || totalContentCount === null) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spinner color="default" />
       </div>
     );
+  }
 
   if (error || deleteError) {
     return (
