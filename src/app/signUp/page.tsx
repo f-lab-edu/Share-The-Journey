@@ -1,63 +1,21 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
 import { Input, Button, Spinner } from '@nextui-org/react';
 
-import auth from '@/libs/auth';
-import db from '@/libs/db';
 import UnknownError from '@/components/UnknownError';
-import { validateEmail } from '@/utils/validate';
+import { useSignUp } from '@/hooks/auth/useSignUp';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<
-    'emailInUse' | 'invalidEmail' | 'weakPassword' | 'unknown' | null
-  >(null);
-  const router = useRouter();
+  const { signUp, isLoading, error, resetError } = useSignUp();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validateEmail(email)) {
-      setError('invalidEmail');
-      return;
-    }
 
-    if (isLoading) return;
-
-    setIsLoading(true);
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((res) => {
-        const user = res.user;
-        const userRef = doc(db, 'users', user.uid);
-
-        return setDoc(userRef, {
-          uid: user.uid,
-          email: user.email,
-          nickname,
-        });
-      })
-      .then(() => {
-        router.push('/');
-      })
-      .catch((err) => {
-        if (err.message.includes(AuthErrorCodes.EMAIL_EXISTS)) {
-          setError('emailInUse');
-        } else if (err.message.includes(AuthErrorCodes.WEAK_PASSWORD)) {
-          setError('weakPassword');
-        } else {
-          setError('unknown');
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    signUp(email, password, nickname);
   };
 
   const getErrorMessage = () => {
@@ -68,11 +26,15 @@ const Page = () => {
         return '이메일 형식이 올바르지 않습니다.';
       case 'weakPassword':
         return '비밀번호는 6자 이상이어야 합니다.';
+      case 'invalidNickname':
+        return '닉네임은 2~10자의 한글, 영문, 숫자만 가능합니다.';
+      case 'nicknameInUse':
+        return '이미 사용중인 닉네임입니다.';
     }
   };
 
   if (error === 'unknown') {
-    return <UnknownError onClick={() => setError(null)} useAt={'signUp'} />;
+    return <UnknownError onClick={resetError} useAt={'signUp'} />;
   }
 
   return (
@@ -119,8 +81,12 @@ const Page = () => {
               type="text"
               label="닉네임"
               value={nickname}
+              isInvalid={
+                error === 'invalidNickname' || error === 'nicknameInUse'
+              }
+              errorMessage={getErrorMessage()}
               isRequired
-              placeholder="닉네임을 입력해주세요."
+              placeholder="한글, 영문, 숫자를 포함할 수 있는 2~10자의 닉네임을 입력해주세요."
               labelPlacement="outside"
               onChange={(e) => setNickname(e.target.value)}
             />
