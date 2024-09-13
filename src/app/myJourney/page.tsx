@@ -11,13 +11,23 @@ import { deletePlace } from '@/utils/places';
 import { useGetMyPlacesCount } from '@/hooks/useGetMyPlacesCount';
 import { AuthContext } from '@/contexts/AuthContext';
 import { PER_PAGE } from '@/constants/perPage';
+import { usePagination } from '@/hooks/usePagination';
 
 const Page = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useContext(AuthContext);
-  const uid = user?.uid;
+  const uid = user?.uid || '';
   const router = useRouter();
+
+  const { totalContentCount, getCount } = useGetMyPlacesCount(uid);
+  const { currentPage, moveToNextPage, moveToPrevPage, setPage } =
+    usePagination(1, Math.ceil(totalContentCount! / PER_PAGE.MY_JOURNEY));
+  const { places, error, fetchMyPlaces, isLoading } = useFetchMyPlaces(
+    currentPage,
+    PER_PAGE.MY_JOURNEY,
+    uid
+  );
 
   const handleDeletePlace = async (id: string) => {
     if (isDeleting) return;
@@ -36,17 +46,7 @@ const Page = () => {
     }
   };
 
-  const {
-    places,
-    error,
-    currentPage,
-    moveToNextPage,
-    moveToPrevPage,
-    fetchMyPlaces,
-  } = useFetchMyPlaces(PER_PAGE.MY_JOURNEY, uid || '');
-  const { totalContentCount, getCount } = useGetMyPlacesCount(uid || '');
-
-  if (!user || totalContentCount === null) {
+  if (!user || totalContentCount === null || isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spinner color="default" />
@@ -98,24 +98,42 @@ const Page = () => {
       <h1 className="text-xl font-semibold mt-10 text-start mb-5">
         내가 경험한 {totalContentCount}개의 여정
       </h1>
-      <div className="grid grid-cols-3 gap-10 mb-10">
-        {places.map((place) => (
-          <div key={place.id}>
-            <MyPlaceCard
-              {...place}
-              onDelete={handleDeletePlace}
-              isLoading={isDeleting}
-            />
+      {places.length === 0 && currentPage > 1 ? (
+        // 임시 처리
+        <div className="flex-col">
+          <p className="text-center text-lg font-semibold">
+            해당 페이지에 등록된 여정이 없습니다.
+          </p>
+          <Button
+            color="warning"
+            size="lg"
+            onClick={() => setPage(currentPage - 1)}
+          >
+            이전 페이지로
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-3 gap-10 mb-10">
+            {places.map((place) => (
+              <div key={place.id}>
+                <MyPlaceCard
+                  {...place}
+                  onDelete={handleDeletePlace}
+                  isLoading={isDeleting}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <PaginationBar
-        currentPage={currentPage}
-        totalContents={totalContentCount}
-        contentsPerPage={PER_PAGE.MY_JOURNEY}
-        moveToNextPage={moveToNextPage}
-        moveToPrevPage={moveToPrevPage}
-      />
+          <PaginationBar
+            currentPage={currentPage}
+            totalContents={totalContentCount}
+            contentsPerPage={PER_PAGE.MY_JOURNEY}
+            moveToNextPage={moveToNextPage}
+            moveToPrevPage={moveToPrevPage}
+          />
+        </>
+      )}
     </div>
   );
 };
