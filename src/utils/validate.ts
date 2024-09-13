@@ -1,3 +1,6 @@
+import { collection, query, where, getDocs } from 'firebase/firestore';
+
+import db from '@/libs/db';
 import { NewPlaceForm } from '@/types/place';
 
 export const validateNewPlaceForm = (props: NewPlaceForm) => {
@@ -28,4 +31,19 @@ export const validateEmail = (email: string) => {
 
 export const validatePassword = (password: string) => {
   return password.length < 6;
+};
+
+export const validateNicknameRegex = (nickname: string) => {
+  const nicknameRegex = /^(?!.*\s)[가-힣a-zA-Z0-9]+$/;
+  const nicknameLength = nickname.length >= 2 && nickname.length <= 10;
+
+  return nicknameRegex.test(nickname) && nicknameLength;
+};
+
+export const validateSameNickname = async (nickname: string) => {
+  const usersCollection = collection(db, 'users');
+  const q = query(usersCollection, where('nickname', '==', nickname));
+  const querySnapshot = await getDocs(q);
+
+  return querySnapshot.empty;
 };

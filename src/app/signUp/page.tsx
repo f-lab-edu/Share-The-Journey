@@ -26,6 +26,10 @@ const Page = () => {
         return '이메일 형식이 올바르지 않습니다.';
       case 'weakPassword':
         return '비밀번호는 6자 이상이어야 합니다.';
+      case 'invalidNickname':
+        return '닉네임은 2~10자의 한글, 영문, 숫자만 가능합니다.';
+      case 'nicknameInUse':
+        return '이미 사용중인 닉네임입니다.';
     }
   };
 
@@ -77,8 +81,12 @@ const Page = () => {
               type="text"
               label="닉네임"
               value={nickname}
+              isInvalid={
+                error === 'invalidNickname' || error === 'nicknameInUse'
+              }
+              errorMessage={getErrorMessage()}
               isRequired
-              placeholder="닉네임을 입력해주세요."
+              placeholder="한글, 영문, 숫자를 포함할 수 있는 2~10자의 닉네임을 입력해주세요."
               labelPlacement="outside"
               onChange={(e) => setNickname(e.target.value)}
             />
