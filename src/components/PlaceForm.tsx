@@ -11,9 +11,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import UnknownError from './UnknownError';
-import { updatePlace } from '@/utils/updatePlace';
-import { uploadImgs } from '@/utils/uploadImgs';
-import { uploadPlace } from '@/utils/uploadPlace';
+import { updatePlace, uploadImgs, uploadPlace } from '@/utils/places';
 import { NewPlaceForm } from '@/types/place';
 import { validateNewPlaceForm } from '@/utils/validate';
 

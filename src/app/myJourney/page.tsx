@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import MyPlaceCard from '@/components/Card/MyPlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
-import { deletePlace } from '@/utils/deletePlace';
+import { deletePlace } from '@/utils/places';
 import { useGetMyPlacesCount } from '@/hooks/useGetMyPlacesCount';
 import { AuthContext } from '@/contexts/AuthContext';
 import { PER_PAGE } from '@/constants/perPage';
