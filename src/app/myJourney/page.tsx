@@ -1,37 +1,40 @@
 'use client';
 
-import { useState, useContext, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
 import MyPlaceCard from '@/components/Card/MyPlaceCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchMyPlaces } from '@/hooks/useFetchMyPlaces';
-import { useDeletePlace } from '@/hooks/useDeletePlace';
+import { deletePlace } from '@/utils/deletePlace';
 import { useGetMyPlacesCount } from '@/hooks/useGetMyPlacesCount';
 import { AuthContext } from '@/contexts/AuthContext';
 import { PER_PAGE } from '@/constants/perPage';
 
 const Page = () => {
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useContext(AuthContext);
-  const [uid, setUid] = useState<string | null>(null);
+  const uid = user?.uid;
   const router = useRouter();
-  const { deletePlace, isLoading, deleteError } = useDeletePlace();
 
   const handleDeletePlace = async (id: string) => {
-    await deletePlace(id).then(() => {
-      if (!error) {
-        fetchMyPlaces(currentPage, uid || '');
-        getCount(uid);
-      }
-    });
-  };
+    if (isDeleting) return;
 
-  useEffect(() => {
-    if (user?.uid) {
-      setUid(user.uid);
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await deletePlace(id);
+      fetchMyPlaces(currentPage, uid || '');
+      getCount(uid);
+    } catch (error) {
+      setDeleteError('장소를 삭제하는 중 오류가 발생했습니다.');
+    } finally {
+      setIsDeleting(false);
     }
-  }, [user]);
+  };
 
   const {
     places,
@@ -41,14 +44,15 @@ const Page = () => {
     moveToPrevPage,
     fetchMyPlaces,
   } = useFetchMyPlaces(PER_PAGE.MY_JOURNEY, uid || '');
-  const { totalContentCount, getCount } = useGetMyPlacesCount(uid);
+  const { totalContentCount, getCount } = useGetMyPlacesCount(uid || '');
 
-  if (!user)
+  if (!user || totalContentCount === null) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spinner color="default" />
       </div>
     );
+  }
 
   if (error || deleteError) {
     return (
@@ -100,7 +104,7 @@ const Page = () => {
             <MyPlaceCard
               {...place}
               onDelete={handleDeletePlace}
-              isLoading={isLoading}
+              isLoading={isDeleting}
             />
           </div>
         ))}

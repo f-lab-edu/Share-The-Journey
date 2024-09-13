@@ -10,7 +10,9 @@ import {
 import db from '@/libs/db';
 
 export const useGetMyPlacesCount = (uid: string | null) => {
-  const [totalContentCount, setTotalContentCount] = useState<number>(0);
+  const [totalContentCount, setTotalContentCount] = useState<number | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
   const getCount = async (uid?: string | null) => {
