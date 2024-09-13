@@ -27,7 +27,6 @@ type PlaceFormProps = {
 const PlaceForm = ({ initialData = {}, mode, id, userId }: PlaceFormProps) => {
   const [newPlace, setNewPlace] = useState<Partial<NewPlaceForm>>({
     ...initialData,
-    amenities: initialData.amenities ?? [],
   });
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
