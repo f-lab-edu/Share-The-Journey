@@ -5,7 +5,11 @@ import { setDoc, doc } from 'firebase/firestore';
 
 import auth from '@/libs/auth';
 import db from '@/libs/db';
-import { validateEmail, validateNickname } from '@/utils/validate';
+import {
+  validateEmail,
+  validateNicknameRegex,
+  validateSameNickname,
+} from '@/utils/validate';
 
 const useSignUp = () => {
   const router = useRouter();
@@ -16,6 +20,7 @@ const useSignUp = () => {
     | 'weakPassword'
     | 'unknown'
     | 'invalidNickname'
+    | 'nicknameInUse'
     | null
   >(null);
 
@@ -27,8 +32,11 @@ const useSignUp = () => {
       return;
     }
 
-    if (!validateNickname(nickname)) {
+    if (!validateNicknameRegex(nickname)) {
       setError('invalidNickname');
+      return;
+    } else if ((await validateSameNickname(nickname)) === false) {
+      setError('nicknameInUse');
       return;
     }
 
