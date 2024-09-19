@@ -8,12 +8,12 @@ import { PlaceDetailProps } from '@/types/place';
 
 export const useFetchSearchPlaces = (
   contentsPerPage: number,
-  searchQuery: string | null
+  searchQuery: string | null,
+  currentPage: number
 ) => {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const indexOfLastPlace = currentPage * contentsPerPage;
   const indexOfFirstPlace = indexOfLastPlace - contentsPerPage;
@@ -45,10 +45,5 @@ export const useFetchSearchPlaces = (
     fetchSearchPlaces(currentPage, searchQuery);
   }, [currentPage, searchQuery]);
 
-  const moveToNextPage = (totalPage: number) =>
-    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
-  const moveToPrevPage = () =>
-    setCurrentPage((page) => (page > 1 ? page - 1 : page));
-
-  return { places, error, currentPage, moveToNextPage, moveToPrevPage };
+  return { places, error, isLoading };
 };
