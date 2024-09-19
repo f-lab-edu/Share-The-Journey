@@ -16,9 +16,12 @@ import {
 import db from '@/libs/db';
 import { PlaceDetailProps } from '@/types/place';
 
-export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
+export const useFetchMyPlaces = (
+  currentPage: number,
+  contentsPerPage: number,
+  uid?: string
+) => {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [pageDocs, setPageDocs] = useState<
     Record<number, QueryDocumentSnapshot<DocumentData> | null>
   >({});
@@ -38,8 +41,8 @@ export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
         limit(contentsPerPage)
       );
 
-      if (page > 1 && pageDocs[page - 1]) {
-        placeQuery = query(placeQuery, startAfter(pageDocs[page - 1]));
+      if (currentPage > 1 && pageDocs[currentPage - 1]) {
+        placeQuery = query(placeQuery, startAfter(pageDocs[currentPage - 1]));
       }
 
       const querySnapshot = await getDocs(placeQuery);
@@ -50,10 +53,6 @@ export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
             ...doc.data(),
           } as PlaceDetailProps)
       );
-
-      if (page > 1 && newPlaces.length === 0) {
-        setCurrentPage((page) => Math.max(page - 1, 1));
-      }
 
       setPlaces(newPlaces);
       setPageDocs((prev) => ({
@@ -72,17 +71,10 @@ export const useFetchMyPlaces = (contentsPerPage: number, uid?: string) => {
     fetchMyPlaces(currentPage, uid);
   }, [currentPage, uid]);
 
-  const moveToNextPage = (totalPage: number) =>
-    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
-  const moveToPrevPage = () =>
-    setCurrentPage((page) => (page > 1 ? page - 1 : page));
-
   return {
     places,
     error,
-    currentPage,
-    moveToNextPage,
-    moveToPrevPage,
     fetchMyPlaces,
+    isLoading,
   };
 };
