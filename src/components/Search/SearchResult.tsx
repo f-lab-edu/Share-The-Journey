@@ -1,19 +1,28 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { Spinner } from '@nextui-org/react';
 
 import SearchResultCard from './SearchResultCard';
 import PaginationBar from '@/components/Pagination';
 import { useFetchSearchPlaces } from '@/hooks/useFetchSearchPlaces';
 import { useGetContentCount } from '@/hooks/useGetContentCount';
+import { usePagination } from '@/hooks/usePagination';
 import { PER_PAGE } from '@/constants/perPage';
 
 const SearchResult = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
-  const { places, error, currentPage, moveToNextPage, moveToPrevPage } =
-    useFetchSearchPlaces(PER_PAGE.MAIN_REVIEW_SEARCH, query);
   const { totalContentCount } = useGetContentCount('places', query);
+  const { currentPage, moveToNextPage, moveToPrevPage } = usePagination(
+    1,
+    Math.ceil(totalContentCount / PER_PAGE.MAIN_REVIEW_SEARCH)
+  );
+  const { places, error, isLoading } = useFetchSearchPlaces(
+    PER_PAGE.MAIN_REVIEW_SEARCH,
+    query,
+    currentPage
+  );
 
   return (
     <section className="w-8/12 mx-auto mt-20">
@@ -25,6 +34,11 @@ const SearchResult = () => {
             </p>
             <p className="text-center text-red-400 mt-2">다시 시도해 주세요.</p>
           </>
+        )}
+        {!error && isLoading && (
+          <div className="flex items-center justify-center h-screen">
+            <Spinner color="default" />
+          </div>
         )}
         {!error && places.length > 0 && (
           <>
