@@ -12,6 +12,7 @@ import { useGetUserName } from '@/hooks/useGetUserName';
 import { addReview } from '@/utils/addReview';
 import { PER_PAGE } from '@/constants/perPage';
 import PaginationBar from './Pagination';
+import { usePagination } from '@/hooks/usePagination';
 
 const ReviewCard = (props: { review: Review }) => {
   const { review } = props;
@@ -46,18 +47,19 @@ const ReviewArea = ({ placeId }: { placeId: string }) => {
   const [newReview, setNewReview] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
-  const {
-    reviews,
-    currentPage,
-    error,
-    moveToNextPage,
-    moveToPrevPage,
-    fetchReviews,
-  } = useFetchReviews(placeId, PER_PAGE.MAIN_REVIEW_SEARCH);
   const { totalContentCount, getCount } = useGetContentCount(
     'reviews',
     null,
     placeId
+  );
+  const { currentPage, moveToNextPage, moveToPrevPage } = usePagination(
+    1,
+    Math.ceil(totalContentCount / PER_PAGE.MAIN_REVIEW_SEARCH)
+  );
+  const { reviews, error, fetchReviews } = useFetchReviews(
+    placeId,
+    PER_PAGE.MAIN_REVIEW_SEARCH,
+    currentPage
   );
 
   const handleAddReview = async () => {

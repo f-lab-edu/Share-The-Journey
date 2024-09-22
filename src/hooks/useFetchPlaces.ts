@@ -14,12 +14,14 @@ import {
 import db from '@/libs/db';
 import { PlaceDetailProps } from '@/types/place';
 
-export const useFetchPlaces = (contentsPerPage: number) => {
+export const useFetchPlaces = (
+  contentsPerPage: number,
+  currentPage: number
+) => {
   const [places, setPlaces] = useState<PlaceDetailProps[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [lastDocs, setLastDocs] = useState<
-    QueryDocumentSnapshot<DocumentData>[]
-  >([]);
+  const [pageDocs, setPageDocs] = useState<
+    Record<number, QueryDocumentSnapshot<DocumentData> | null>
+  >({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,28 +37,30 @@ export const useFetchPlaces = (contentsPerPage: number) => {
         limit(contentsPerPage)
       );
 
-      if (page > 1 && lastDocs[page - 2]) {
+      if (page > 1 && pageDocs[currentPage - 1]) {
         placesQuery = query(
           placesQuery,
-          startAfter(lastDocs[page - 2]),
+          startAfter(pageDocs[currentPage - 1]),
           limit(contentsPerPage)
         );
       }
 
       const querySnapshot = await getDocs(placesQuery);
-      let fetchedPlaces = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as PlaceDetailProps[];
+      let fetchedPlaces = querySnapshot.docs.map(
+        (doc) =>
+          ({
+            ...doc.data(),
+            id: doc.id,
+          } as PlaceDetailProps)
+      );
 
       setPlaces(fetchedPlaces);
-
-      const newLastDocs = [...lastDocs];
-      newLastDocs[page - 1] = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-      setLastDocs(newLastDocs);
+      setPageDocs((prev) => ({
+        ...prev,
+        [page]: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
+      }));
     } catch (e) {
-      setError('장소 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
+      setError('장소 정보를 가져오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -66,16 +70,9 @@ export const useFetchPlaces = (contentsPerPage: number) => {
     fetchPlaces(currentPage);
   }, [currentPage]);
 
-  const moveToNextPage = (totalPage: number) =>
-    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
-  const moveToPrevPage = () =>
-    setCurrentPage((page) => (page > 1 ? page - 1 : page));
-
   return {
     places,
-    currentPage,
     error,
-    moveToNextPage,
-    moveToPrevPage,
+    isLoading,
   };
 };

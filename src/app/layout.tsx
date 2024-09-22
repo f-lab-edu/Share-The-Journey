@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from '../contexts/providers';
 import { Noto_Sans } from 'next/font/google';
+import Header from '@/components/Header';
 
 const noto = Noto_Sans({
   subsets: ['latin'],
@@ -21,7 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`container mx-auto bg-white px-4 ${noto.className}`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );

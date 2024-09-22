@@ -15,13 +15,16 @@ import {
 import db from '@/libs/db';
 import { Review } from '@/types/review';
 
-export const useFetchReviews = (placeId: string, contentPerPage: number) => {
+export const useFetchReviews = (
+  placeId: string,
+  contentPerPage: number,
+  currentPage: number
+) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [lastDocs, setLastDocs] = useState<
-    QueryDocumentSnapshot<DocumentData>[]
-  >([]);
+  const [pageDocs, setPageDocs] = useState<
+    Record<number, QueryDocumentSnapshot<DocumentData> | null>
+  >({});
   const [error, setError] = useState<string | null>(null);
 
   const fetchReviews = async (page: number) => {
@@ -37,10 +40,10 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
         limit(contentPerPage)
       );
 
-      if (page > 1 && lastDocs[page - 2]) {
+      if (page > 1 && pageDocs[page - 1]) {
         reviewsQuery = query(
           reviewsQuery,
-          startAfter(lastDocs[page - 2]),
+          startAfter(pageDocs[page - 1]),
           limit(contentPerPage)
         );
       }
@@ -53,10 +56,10 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
 
       setReviews(reviewData);
 
-      const newLastDocs = [...lastDocs];
-      newLastDocs[page - 1] = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-      setLastDocs(newLastDocs);
+      setPageDocs((prev) => ({
+        ...prev,
+        [page]: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
+      }));
     } catch (error) {
       setError('리뷰 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
     } finally {
@@ -68,17 +71,9 @@ export const useFetchReviews = (placeId: string, contentPerPage: number) => {
     fetchReviews(currentPage);
   }, [currentPage]);
 
-  const moveToNextPage = (totalPage: number) =>
-    setCurrentPage((page) => (page < totalPage ? page + 1 : page));
-  const moveToPrevPage = () =>
-    setCurrentPage((page) => (page > 1 ? page - 1 : page));
-
   return {
     reviews,
-    currentPage,
     error,
-    moveToNextPage,
-    moveToPrevPage,
     fetchReviews,
   };
 };
